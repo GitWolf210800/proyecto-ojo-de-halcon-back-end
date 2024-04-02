@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="register.css" />	
+	<title>Formulario de Registro de Usuario</title>
+	<script src="register.js" defer></script>
+</head>
+<body>
+<div class="container">
+	<div class="cuerpo">
+		<h3 class="titulo" id="tittle">Registro de Usuarios</h3>
+		<form class="formulario" id="formulario">
+			<div class="info" id="nombre">Ingrese su nombre o nombres:</div>
+			<input class="input" type="text" id="inputName" required>
+
+			<div class="info" id="apellido">Ingrese su apellido o apellidos</div>
+			<input class="input" type="text" id="inputLastName" required>
+
+			<div class="info" id="legajo">Ingrese su Numero de Legajo:</div>
+			<input class="input" type="number" id="inputLegajo" required>
+			
+			<div class="info" id="puesto">Puesto al que Pertenece: </div>
+			<input class="input" type="text" id="inputPuesto" required>
+
+			<div class="info" id="mail">Ingrese Correo (opcional)</div>
+			<input class="input" type="text" id="inputEmail">
+		
+			<div class="info" id="passUser">Ingrese la Contraseña para el Usuario</div>
+			<input class="input" type="password" id="inputPassUser" required>
+
+			<div class="info" id="userPatron">Legajo Usuario Patrocinador:</div>
+			<input class="input" type="number" id="inputUserPatron" required>
+
+			<div class="info" id="passPatron">Ingrese la Contraseña del Usuario Patrocinador</div>
+			<input class="input" type="password" id="inputPassPatron" required>
+
+			<p class="error escondido">Error</p>
+
+			<input class="boton enviar" type="submit" value="enviar" id="submit">
+		</form>
+	</div>
+</div>	
+</body>
+</html>

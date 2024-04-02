@@ -1,0 +1,257 @@
+
+body {
+    background: #333;
+    font-family: sans-serif;
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    margin: 0% auto;
+    /*margin-left: -30px;*/
+    width: 100%;
+}
+
+.input:focus {
+    background: linear-gradient(to bottom, transparent, #122);
+    outline: none;
+    border-bottom: 3px solid #5e9;
+}
+
+.error{
+    color: crimson;
+}
+
+.escondido{
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+
+
+    .cuerpo {
+        display: block;
+        margin-left: 0px;
+        margin-top: 5px;
+    }
+
+      
+    .titulo {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 0px;
+        margin-left: 0px;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #65FF3F;
+        font-size: 18px;
+        align-items: center;
+        width: 400px;
+    }
+    
+    .fecha {
+        display: flex;
+        float: right;
+        color: #FFF;
+        font-size: 15px;
+        margin-top: 0px;
+        margin-bottom: 10px;
+        margin-right: -20px;
+        margin-left: 0px;
+        width: 250px;
+    }
+    
+    .fecha__mod {
+        display: flex;
+        flex-wrap: wrap; 
+        justify-content: center;
+        color: #FFF;
+        font-size: 16px;;
+        margin-left: 80px;
+        text-align: center;
+        align-items: center;
+        width: 200px;
+    }
+    
+    .userMod {
+        display: flex;
+        color: #FFF;
+        font-size: 20px;
+        margin-top: 10px;
+        margin-left: 90px;
+        width: 200px;
+    }
+    
+    .formulario {
+        display: block;
+        margin-left: 80px;
+    }
+    
+    .info {
+        display: flex;
+        margin-left: 20px;
+        margin-top: 10px;
+        /*background-color: #033FF7;
+        border-radius: 5px;*/
+        color: #65FF3F;
+        font-size: 16px;
+        /*border-bottom: 3px solid rgb(85, 221, 130);*/
+        width: 200px;    
+    }
+    
+    .input {
+        display: flex;        
+        padding: 7px;
+        margin: 6px;
+        width: 180px;
+        background: transparent;
+        justify-content: center;
+        font-size: 15px;
+        color: #f8fbfc;
+        border-color: #4BB6DD;
+        border-bottom: 5px solid #5dd;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .atras {
+        display: flex;
+
+    }
+
+    .home {
+        margin-top: -10px;
+        margin-left: 40px;
+        margin-bottom: 10px;
+    }
+
+    .enviar {
+        margin-left: 70px;
+    }
+    
+    .boton {
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        margin-top: 10px;
+        margin-right: 5px;
+        font-size: 15px;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .boton:hover {
+        background-color: #45a049;
+    }
+    
+    .boton:active {
+        background-color: #3e8e41;
+    }
+
+}
+
+@media screen and (min-width: 800px) {
+    
+
+.titulo {
+    display: block;
+    margin-top: -20px;
+    margin-left: 0px;
+    font-size: 25px;
+    color: #65FF3F;
+}
+
+.fecha {
+    display: block;
+    color: #FFF;
+    font-size: 20px;
+    margin-left: 0px;
+}
+
+.fecha__mod {
+    display: block;
+    color: #FFF;
+    font-size: 20px;
+    margin-left: 100px;
+}
+
+.userMod {
+    display: block;
+    color: #FFF;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-left: 150px;
+}
+
+.cuerpo {
+    margin-left: 0px;
+    margin-top: 20px;
+}
+
+.formulario {
+    display: block;
+    margin-left: 150px;
+}
+
+.info {
+    display: block;
+    margin-left: 25px;
+    margin-top: 50px;
+    /*background-color: #033FF7;
+    border-radius: 5px;*/
+    color: #65FF3F;
+    font-size: 17px;
+    /*border-bottom: 3px solid rgb(85, 221, 130);*/
+    width: 300px;    
+}
+
+.input {
+    padding: 7px;
+    margin: 6px;
+    width: 300px;
+    background: transparent;
+    display: block;
+    justify-content: center;
+    font-size: 15px;
+    color: #f8fbfc;
+    border-color: #4BB6DD;
+    border-bottom: 5px solid #5dd;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.atras {
+    display: block;
+    margin-left: 0px;
+}
+
+.boton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 120px;
+    margin-right: 5px;
+    font-size: 15px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.boton:hover {
+    background-color: #45a049;
+}
+
+.boton:active {
+    background-color: #3e8e41;
+}
+
+}
