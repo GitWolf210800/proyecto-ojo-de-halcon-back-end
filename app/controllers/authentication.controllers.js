@@ -1,19 +1,42 @@
 import bcryptjs from "bcryptjs";
+import jsonwebtoken from "jsonwebtoken";
+import dotenv from "dotenv";
 
-
-const usuarios = [{
+dotenv.config();
+export const usuarios = [{
     user : 1150,
     email : 'a@a.com',
-    password : 'a'
+    password : '$2a$05$uG566rRvNbIybe9xx.CyiuhEHp228O/GO5eWRnGuunaT8MZtaOz5W'
 }];
 
 async function login(req, res){
     console.log(req.body);
     const user = parseInt(req.body.user);
-    const password = parseInt(req.body.password);
+    const password = req.body.password;
     if(!user || !password){
         return res.status(400).send({status:"Error", message:"Los Campos Estan Incompletos"});
     }
+
+    const usuariosARevisar = usuarios.find(usuario => usuario.user === user);
+
+    if(!usuariosARevisar){
+        return res.status(400).send({status: "Error", message:"¡Error de Login!"});
+     }
+
+     const loginCorrecto = await bcryptjs.compare(password, usuariosARevisar.password);
+     if(!loginCorrecto){
+        return res.status(400).send({status: "Error", message:"¡Error de Login!"});
+     }
+     const token = jsonwebtoken.sign({user: usuariosARevisar.user}, 
+        process.env.JWT_SECRET, 
+        {expiresIn: process.env.JWT_EXPIRATION});
+
+    const cookieOption = {
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+        path: "/"
+    };
+    res.cookie("jwt",token,cookieOption);
+    res.send({status:"ok", message: "Usuario loggeado", redirect: "/admin"})
 }
 
 async function register(req, res){

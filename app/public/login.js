@@ -1,4 +1,4 @@
-const msjError = document.getElementsByName("error")[0];
+const msjError = document.getElementsByClassName("error")[0];
 
 document.getElementById('login-form').addEventListener('submit',async (e)=>{
     e.preventDefault();
