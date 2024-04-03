@@ -8,7 +8,12 @@ const usuarios = [{
 }];
 
 async function login(req, res){
-
+    console.log(req.body);
+    const user = parseInt(req.body.user);
+    const password = parseInt(req.body.password);
+    if(!user || !password){
+        return res.status(400).send({status:"Error", message:"Los Campos Estan Incompletos"});
+    }
 }
 
 async function register(req, res){
@@ -30,7 +35,7 @@ async function register(req, res){
 
     const usuariosARevisar = usuarios.find(usuario => usuario.user === legajo);
 
-    console.log(usuariosARevisar);
+    //console.log(usuariosARevisar);
 
     if(usuariosARevisar){
        return res.status(400).send({status: "Error", message:"Este usuario ya Existe!"});

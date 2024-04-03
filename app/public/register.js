@@ -1,4 +1,4 @@
-const msjError = document.getElementById("error")[0];
+const msjError = document.getElementByName("error")[0];
 
 document.getElementById("formulario").addEventListener("submit",async(e) => {
     e.preventDefault();

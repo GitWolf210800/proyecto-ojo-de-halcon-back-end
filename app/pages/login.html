@@ -7,23 +7,24 @@
 		<title>Login</title>
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
         <!-- include the stylesheet file -->
-        <link href="/style.css" rel="stylesheet" type="text/css">
+        <link href="style.css" rel="stylesheet" type="text/css">
         <script src="login.js" defer></script>
 	</head>
 	<body>
 		<div class="login">
 			<h1>Login  | <a  href="http://192.168.3.122/ProyectoOjodeHalconV2">Ojo de Halcon</a></h1>
-			<form action="/auth" method="post">
+			<form id="login-form">
 				<label for="username">
 					<!-- font awesome icon -->
 					<i class="fas fa-user"></i>
 				</label>
-				<input type="number" name="legajo" placeholder="Legajo" id="legajo" required>
+				<input type="text" name="user" placeholder="Legajo" id="user" required>
 				<label for="password">
 					<i class="fas fa-lock"></i>
 				</label>
 				<input type="password" name="password" placeholder="Contraseña" id="password" required>
 				<input type="submit" value="Ingresar">
+				<p class="error escondido">Error en Inicio de Sesion</p>
 			</form>
 		</div>
 		<div class="svg__image">

@@ -7,6 +7,14 @@ body {
     background-color: #333;
 }
 
+.error{
+    color: crimson;
+}
+
+.escondido{
+    display: none;
+}
+
 .svg__image{
     width: 400px;
 }
