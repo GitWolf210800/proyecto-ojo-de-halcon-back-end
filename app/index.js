@@ -1,5 +1,6 @@
-import express  from "express";
+import express from "express"; 
 import cookieParser from "cookie-parser";
+//import mysql from "mysql";
 //Fix para __dirname
 import path from 'path';
 import { fileURLToPath } from "url";

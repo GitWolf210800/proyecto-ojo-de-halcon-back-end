@@ -1,7 +1,7 @@
-const msjError = document.getElementByClassName("error")[0];
+const msjError = document.getElementsByClassName("error")[0];
 
 document.getElementById("formulario").addEventListener("submit",async(e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     console.log(e.target.children.inputName.value);
 
     const res = await fetch("http://192.168.3.122:4000/api/register",{

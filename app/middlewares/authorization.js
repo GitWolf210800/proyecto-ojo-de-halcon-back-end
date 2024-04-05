@@ -1,6 +1,7 @@
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
 import  {usuarios}  from "../controllers/authentication.controllers.js";
+import {connection} from "./db.js";
 
 dotenv.config();
 
@@ -12,8 +13,8 @@ function soloAdmin(req, res, next){
 
 function soloPublico(req, res, next){
     const logueado = revisarCookie(req);
-    if(!logueado) return next();
-    else return res.redirect('/admin');
+    if(logueado) return res.redirect('/admin');
+    else return next();
 };
 
 function revisarCookie(req){
@@ -21,9 +22,8 @@ function revisarCookie(req){
         const cookieJWT = req.headers.cookie.split('; ').find(cookie => cookie.startsWith('jwt=')).slice(4);
         const decodificada = jsonwebtoken.verify(cookieJWT, process.env.JWT_SECRET);
         console.log(decodificada);
-        const usuariosARevisar = usuarios.find(usuario => usuario.user === decodificada.user);
-        console.log(usuariosARevisar);
-        if(!usuariosARevisar){
+
+         if(!decodificada){
             return false
          } else return true;
     }
