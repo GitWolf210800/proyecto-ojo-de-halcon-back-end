@@ -5,6 +5,98 @@
 }
 body {
     background-color: #333;
+    font-family: sans-serif;
+    width: 100%;
+}
+
+.bienvenida{
+    display: flex;
+    color: #FFF;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-left: auto;
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    margin: 0% auto;
+    width: 100%;
+}
+
+.instalaciones{
+    display: block;
+    margin-top: 25px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.boton:hover {
+    background-color: #45a049;
+}
+
+.boton:active {
+    background-color: #3e8e41;
+}
+
+h1, h2 {
+    color: #7CF55E;
+}
+
+.titulo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-left: 0px;
+    margin-top: 20px;
+    text-align: center;
+    align-items: center;
+}
+
+.fecha {
+    color: azure;
+    font-size: 25px;
+}
+
+.logout{
+    display: flex;
+    position: absolute;
+    padding: 10px 15px;
+    color: #FFF;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    top: 5px;
+    right: 10px;
+
+}
+
+.buttInst{
+    padding: 5px 10px;
+    color: #FFF;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    top: 5px;
+    right: 10px;
+
+}
+
+.botones {
+    display: flex;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 .error{
@@ -77,3 +169,42 @@ body {
   background-color: #1984bc;
     transition: background-color 0.2s;
 }
+
+
+@media screen and (max-width: 800px) {
+  
+    .boton {
+        padding: 20px 25px;
+        background-color: #4CAF50;
+        margin-top: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        font-size: 25px;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+
+}
+
+@media screen and (min-width: 800px) {
+
+    
+    .boton {
+        padding: 40px 50px;
+        background-color: #4CAF50;
+        margin-top: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        font-size: 25px;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+}
+
+

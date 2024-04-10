@@ -14,6 +14,7 @@ document.getElementById("formulario").addEventListener("submit",async(e) => {
             lastName : e.target.children.inputLastName.value,
             legajo : e.target.children.inputLegajo.value,
             puesto : e.target.children.inputPuesto.value,
+            clavex: e.target.children.inputClavex.value,
             email : e.target.children.inputEmail.value,
             passUser : e.target.children.inputPassUser.value,
             legajoPat : e.target.children.inputUserPatron.value,

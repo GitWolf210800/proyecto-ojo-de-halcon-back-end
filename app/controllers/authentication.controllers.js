@@ -5,15 +5,6 @@ import {connection} from "../middlewares/db.js";
 
 //Settings
 dotenv.config();
-var usuarioss = [];
-
-
-export const usuarios = [{
-    user : 1150,
-    email : 'a@a.com',
-    password : '$2a$05$jW.mYAll7N2vq1ZjTAmqf.pnGn1TvN/JbVVoHcrKUMHtoukRg8mkO'
-}];
-
 
 async function login(req, res){
     console.log(req.body);
@@ -23,20 +14,12 @@ async function login(req, res){
         return res.status(400).send({status:"Error", message:"Los Campos Estan Incompletos"});
     }
 
-    const salt = await bcryptjs.genSalt(5);
-    const hashPassword = await bcryptjs.hash(password,salt);
-    console.log(`password Hash: (${hashPassword})`);
-
-    connection.connect();
-
     connection.query(`SELECT * FROM usuarios WHERE id_legajo = ${user}`, async function(error, results, fields){
         if(error){
             console.log(error);
         };
         if(Object.keys(results).length > 0){
             const loginCorrecto = await bcryptjs.compare(password, results[0].passwordd);
-            console.log('entro!');
-            console.log(loginCorrecto);
             if(loginCorrecto){
             const token = jsonwebtoken.sign({user: user, name: results[0].nombre, lastName: results[0].apellido}, 
                 process.env.JWT_SECRET, 
@@ -46,36 +29,18 @@ async function login(req, res){
                 path: "/"
             };
             res.cookie("jwt",token,cookieOption);
-            res.send({status:"ok", message: "Usuario loggeado", redirect: "/admin"});
-        } else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
-            //return res.status(200).send({status:"ok", message:"Inicio de Sesion Exitoso", redirect: '/admin'});
+            if (results[0].id_priv === 0){
+                res.send({status:"ok", message: "Super_Usuario loggeado", redirect: "/admin"});
+            } 
+            else if (results[0].id_priv === 1){
+                res.send({status: 'ok', message: 'usuario admin limites loggeado', redirect: '/limites'});
+            }
+            } else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
         } else {
             return res.status(400).send({status: "Error", message:"¡Error de Login!"});
         }
     });
-    connection.end();
 
-   /*
-    const usuariosARevisar = usuarios.find(usuario => usuario.user === user);
-
-    if(!usuariosARevisar){
-        return res.status(400).send({status: "Error", message:"¡Error de Login!"});
-     }
-
-     const loginCorrecto = await bcryptjs.compare(password, usuariosARevisar.password);
-     if(!loginCorrecto){
-        return res.status(400).send({status: "Error", message:"¡Error de Login!"});
-     }
-     const token = jsonwebtoken.sign({user: usuariosARevisar.user}, 
-        process.env.JWT_SECRET, 
-        {expiresIn: process.env.JWT_EXPIRATION});
-
-    const cookieOption = {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-        path: "/"
-    };
-    res.cookie("jwt",token,cookieOption);
-    res.send({status:"ok", message: "Usuario loggeado", redirect: "/admin"});*/
 }
 
 async function register(req, res){
@@ -84,33 +49,77 @@ async function register(req, res){
     const lastName = req.body.lastName;
     const legajo = parseInt(req.body.legajo);
     const puesto = req.body.puesto;
+    let clavex = req.body.clavex;
     let email = req.body.email;
     const passUser = req.body.passUser;
     const legajoPat = req.body.legajoPat;
     const passUserPat = req.body.passUserPat;
 
-    (email) ? email = email : email = null;
+    (email) ? email = email : email = 'NULL';
+
+    if (!clavex) clavex = 'NULL';
+    else if (clavex === 'SUPER_USER') clavex = 0;
+    else if (clavex === 'ADMIN_LIMITES') clavex = 1;
 
     if (!name || !lastName || !legajo || !puesto || !passUser || !legajoPat || !passUserPat){
         return res.status(400).send({status: "Error", message: "Los campos obligatorios estan incompletos"});
     }
 
-    const usuariosARevisar = usuarios.find(usuario => usuario.user === legajo);
 
-    //console.log(usuariosARevisar);
+    connection.query(`SELECT * FROM usuarios WHERE id_legajo = ${legajoPat}`, async function(error, results, fields){
+        if (error){
+            console.log(error);
+        }
+        if(Object.keys(results).length > 0){
+            const passUserPatVerif = await bcryptjs.compare(passUserPat, results[0].passwordd);
+            (!passUserPatVerif)
+                ? res.status(400).send({status: 'Error', message: 'Error de password de usuario Patrocinador'})
+                : console.log('ok passPatron');
+            
+            (results[0].id_priv !== 0)
+                ? res.status(400).send({status: 'Error', message: 'El usuario patrocinador ingresado, no tiene autorizacion para la solicitud!'})
+                : console.log('ok usuarioPatron');
+        } else return res.status(400).send({status: 'Error', message: 'El Usuario Patrocinador ingresado no existe'});
+    });
 
-    if(usuariosARevisar){
-       return res.status(400).send({status: "Error", message:"Este usuario ya Existe!"});
-    }
+
+
+    connection.query(`SELECT * FROM usuarios WHERE id_legajo = ${legajo}`, function(error, results, fields){
+        if(error){
+            console.log(error);
+        }
+        if(Object.keys(results).length > 0){
+            res.status(400).send({status:'Error', message: 'Este Usuario ya Existe!'});
+        }
+    });
 
     const salt = await bcryptjs.genSalt(5);
     const hashPassword = await bcryptjs.hash(passUser,salt);
-   const newUser = {
-        user : legajo, email : email, password : hashPassword
-    };
-    usuarios.push(newUser);
-    console.log(usuarios);
-    return res.status(201).send({status:"ok", message: `Usuario ${legajo} agregado`, redirect:"/"});
+    let query = `INSERT INTO usuarios (
+        id_legajo,
+        nombre,
+        apellido,
+        puesto,
+        email,
+        passwordd,
+        id_priv
+    )  VALUES( ${legajo}, 
+        '${name}', 
+        '${lastName}', 
+        '${puesto}', 
+        '${email}', 
+        '${hashPassword}', 
+        ${clavex});`;
+    console.log(query);
+
+    connection.query(query, function(error, results, fields){
+        if (error){
+            console.log(error);
+        } else {
+            return res.status(201).send({status:"ok", message: `Usuario ${legajo} agregado`, redirect:"/"});
+        }
+    });
+
 }
 
 export const methods = {
