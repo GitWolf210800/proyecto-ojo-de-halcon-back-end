@@ -25,5 +25,7 @@ app.get('/admin', authorization.soloAdmin,(req, res)=> res.sendFile(__dirname + 
 app.get('/limites', authorization.adminLimites,(req, res)=> res.sendFile(__dirname + '/pages/admin/limites.html'));
 app.get('/limitesfiltros', authorization.adminLimites,(req, res)=> res.sendFile(__dirname + '/pages/admin/fabsLimFil.html'));
 app.post('/api/filfab', authorization.filFabPages);
+app.post('/api/formlimfil', authorization.formLimFil);
+app.post('/api/formlimsent', authorization.formLimFildataIn);
 app.post('/api/login', authentication.login);
 app.post('/api/register', authentication.register);

@@ -28,7 +28,8 @@ body {
 }
 
 .instalaciones{
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
     margin-top: 25px;
     width: 100%;
     justify-content: center;
@@ -55,6 +56,8 @@ h1, h2 {
     margin-top: 20px;
     text-align: center;
     align-items: center;
+    color: #7CF55E;
+    width: 100%;
 }
 
 .fecha {
@@ -73,7 +76,6 @@ h1, h2 {
     cursor: pointer;
     top: 5px;
     right: 10px;
-
 }
 
 .buttInst{
@@ -170,6 +172,66 @@ h1, h2 {
     transition: background-color 0.2s;
 }
 
+
+.form-content{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.input {
+    display: flex;        
+    padding: 7px;
+    margin: 6px;
+    width: 100%;
+    background: transparent;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    color: #f8fbfc;
+    border-color: #4BB6DD;
+    border-bottom: 5px solid #5dd;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.input:focus {
+    background: linear-gradient(to bottom, transparent, #122);
+    outline: none;
+    border-bottom: 3px solid #5e9;
+}
+
+.info {
+    display: flex;
+    margin-left: 20px;
+    margin-top: 10px;
+    /*background-color: #033FF7;
+    border-radius: 5px;*/
+    color: #65FF3F;
+    font-size: 16px;
+    /*border-bottom: 3px solid rgb(85, 221, 130);*/
+    width: 100%;    
+}
+
+.enviar{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 15px;
+    color: #FFF;
+    background-color: #348dba;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    top: 5px;
+    right: 10px;
+    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
 
 @media screen and (max-width: 800px) {
   

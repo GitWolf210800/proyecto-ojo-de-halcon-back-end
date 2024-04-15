@@ -1,8 +1,109 @@
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
 import { connection } from "./db.js";
+import fetch from "node-fetch";
 
 dotenv.config();
+
+async function formLimFildataIn(req, res, next){
+    const loggeado = revisarCookie(req);
+    console.log(req.body);
+    if(loggeado.status){
+        const queryVer = `SELECT * FROM usuarios
+                       WHERE id_legajo = ${loggeado.data.user}`;;
+        connection.query(queryVer, function(error, results, fields){
+            if (error) console.log(error);
+            if(results[0].id_priv === 0 || results[0].id_priv === 1){
+                console.log('ok'); 
+            } else res.status(400).send({status: 'Error', message: 'El usuario no tiene autorizacion para la peticion!'}, res.redirect('/'));
+        });
+
+        const data = req.body;
+        let dataQuery = [];
+        let keys = [];
+        let dataInsert = [];
+
+        for(let v in data){
+            if(data[v] === null || data[v] === ''){
+                console.log('error de datos in limFiltros');
+                res.status(400).send({status: 'Error', message: 'Error de entrada de Datos'}, res.redirect('/'));
+            }
+        }
+
+
+        for(let x in data){
+            if(x !== 'id_instalacion' && x !== 'motivo'){
+                dataQuery.push(`${x} = ${data[x]}`);
+            };
+            keys.push(x);
+            if(x === 'motivo'){
+                dataInsert.push(`'${data[x]}'`);
+            } else dataInsert.push(data[x]);
+        }
+        dataQuery.push(`id_legajo = ${loggeado.data.user}`);
+        const queryUpdate = `UPDATE filtros_limites SET ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
+
+        const queryInsert = `INSERT INTO ultimos_cambios_filtros (${keys},id_legajo) VALUES(${dataInsert},${loggeado.data.user});`;
+        
+        connection.query(queryInsert, function(error, results, fields){
+            if(error) console.log(error);
+        });
+
+        connection.query(queryUpdate, function(error, results, fields){
+            if(error) console.log(error);
+        });
+
+        res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente', redirect :'/limitesfiltros'});
+        
+    }
+}
+
+function formLimFil(req, res, next){
+    const loggeado = revisarCookie(req);
+    console.log(req.body);
+    let dato = '';
+    if(loggeado.status){
+        if(req.body.fabrica === 'Fábrica 1') dato = 'fab1_';
+        else if (req.body.fabrica === 'Fábrica 3') dato = 'fab3_';
+        else if (req.body.fabrica === 'Fábrica 4') dato = 'fab4_';
+        else if (req.body.fabrica === 'Fábrica 6') dato = 'fab6_';
+        else if (req.body.fabrica === 'Fábrica 9') dato = 'fab9_';
+        else return res.status(400).send({status: 'Error', message: 'Error de datos'}, redirect('/limitesfiltros'));
+        
+        const dataIn = `${dato}${req.body.button}_filtro`;
+
+        const query = `SELECT STRAIGHT_JOIN 
+                        i.id_instalacion,
+                        i.nombre,
+                        t.limPrefiltro,
+                        t.limFiltro,
+                        t.limFiltroVent,
+                        t.limFiltroVent_A,
+                        t.limVent,
+                        t.limPicos,
+                        t.limPicos2,
+                        t.limRpm,
+                        t.limRpm2,
+                        t.limCarro,
+                        t.limCarro2
+                     FROM filtros_limites t
+                     JOIN instalaciones i
+                     ON i.id_instalacion = t.id_instalacion
+                     WHERE i.nombre = '${dataIn}';`;
+
+        connection.query(query, function(error, results, fields){
+            if(error) console.log(error);
+            if(Object.keys(results).length > 0){
+                console.log(results);
+                res.json(results);
+            }
+            else return res.status(400).send({status: 'Error', message: 'Error, la instalacion no existe'})
+        });
+        
+    }
+    else return res.redirect('/');
+};
+
 
 function filFabPages(req, res, next){
     const logueado = revisarCookie(req);
@@ -118,5 +219,7 @@ export const methods = {
     soloAdmin,
     soloPublico,
     adminLimites,
-    filFabPages
+    filFabPages,
+    formLimFil,
+    formLimFildataIn
 };

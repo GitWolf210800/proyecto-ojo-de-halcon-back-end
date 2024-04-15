@@ -21,24 +21,25 @@ async function login(req, res){
         if(Object.keys(results).length > 0){
             const loginCorrecto = await bcryptjs.compare(password, results[0].passwordd);
             if(loginCorrecto){
-            const token = jsonwebtoken.sign({user: user, name: results[0].nombre, lastName: results[0].apellido}, 
-                process.env.JWT_SECRET, 
-                {expiresIn: process.env.JWT_EXPIRATION});
-            const cookieOption = {
-                expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-                path: "/"
-            };
-            res.cookie("jwt",token,cookieOption);
-            if (results[0].id_priv === 0){
-                res.send({status:"ok", message: "Super_Usuario loggeado", redirect: "/admin"});
+                const token = jsonwebtoken.sign({user: user, name: results[0].nombre, lastName: results[0].apellido}, 
+                    process.env.JWT_SECRET, 
+                    {expiresIn: process.env.JWT_EXPIRATION}
+                );
+                const cookieOption = {
+                    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+                    path: "/"
+                };
+                res.cookie("jwt",token,cookieOption);
+                if (results[0].id_priv === 0){
+                    res.send({status:"ok", message: "Super_Usuario loggeado", redirect: "/admin"});
+                } 
+                else if (results[0].id_priv === 1){
+                    res.send({status: 'ok', message: 'usuario admin limites loggeado', redirect: '/limites'});
+                }
             } 
-            else if (results[0].id_priv === 1){
-                res.send({status: 'ok', message: 'usuario admin limites loggeado', redirect: '/limites'});
-            }
-            } else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
-        } else {
-            return res.status(400).send({status: "Error", message:"¡Error de Login!"});
-        }
+            else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
+        } 
+        else return res.status(400).send({status: "Error", message:"¡Error de Login!"});
     });
 
 }
