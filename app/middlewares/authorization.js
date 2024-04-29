@@ -41,9 +41,9 @@ async function formLimFildataIn(req, res, next){
             } else dataInsert.push(data[x]);
         }
         dataQuery.push(`id_legajo = ${loggeado.data.user}`);
-        const queryUpdate = `UPDATE filtros_limites SET ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
+        const queryUpdate = `UPDATE filtros_limites SET fecha = CURRENT_TIMESTAMP, ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
 
-        const queryInsert = `INSERT INTO ultimos_cambios_filtros (${keys},id_legajo) VALUES(${dataInsert},${loggeado.data.user});`;
+        const queryInsert = `INSERT INTO ultimos_cambios_filtros (fecha,${keys},id_legajo) VALUES(CURRENT_TIMESTAMP,${dataInsert},${loggeado.data.user});`;
         
         connection.query(queryInsert, function(error, results, fields){
             if(error) console.log(error);

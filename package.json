@@ -5,6 +5,8 @@
   "main": "app/index.js",
   "type": "module",
   "scripts": {
+    "prod": "forever start app/index.js",
+    "prodStop": "forever stop app/index.js",
     "dev": "nodemon --exec node app/index.js"
   },
   "keywords": [],
@@ -15,6 +17,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
+    "forever": "^4.0.3",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "node-fetch": "^3.3.2"
@@ -23,3 +26,5 @@
     "nodemon": "^3.1.0"
   }
 }
+
+

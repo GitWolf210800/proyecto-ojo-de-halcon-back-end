@@ -1,0 +1,146 @@
+body
+{
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #444444;
+    font-size: 9pt;
+    background-color: #333;
+    height: 100%;
+    margin: 0;
+}
+
+.ok {
+    background-color: #31E749;
+    color: #000;
+    z-index: 1;
+}
+
+.alert {
+    background-color: #D80B0B;
+    color: #FFF;
+}
+
+svg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    margin: 0 auto;
+    width: 100%;
+    z-index: 0;
+}
+
+rect {
+    transition: fill 0.75s, stroke 1.5s;
+}
+
+tspan {
+    user-select: none;
+}
+
+text {
+    white-space: pre-line;
+}
+
+h4, p {
+    font-family: sans-serif;
+    margin: 4px auto 4px;
+    /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
+    /* font-size: 13px; */
+}
+
+#ventanaClima {
+    display: none;
+    background-color: #626262;
+    color: #f0f0f0;
+    text-align: justify;
+    position: fixed;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    padding: 10px;
+    z-index: 1;
+    margin: 0 auto;
+    width: 500px;
+    height: 270px;
+}
+
+
+.textclima {
+    color: #f0f0f0;
+    margin-top: 1px;
+    margin-bottom: 2px;
+    text-align: center;
+}
+
+
+#ventanaFlotante {
+    display: none;
+    background-color: #626262;
+    color: #f0f0f0;
+    text-align: justify;
+    position: fixed;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    padding: 10px;
+    z-index: 1;
+    margin: 0 auto;
+    width: 280px;
+    height: 330px;
+}
+
+#instalacion {
+    text-decoration: underline;
+    text-decoration-color: #BDB8B8;
+    text-decoration-style: line;
+    text-decoration-thickness: 2px;
+    margin-top: -2px;
+}
+
+#preFiltro {
+    display: none;
+}
+
+#preFiltroH , #RPM2H, #carro2H, #titlePicos2 {
+    display: none;
+}
+.title {
+    margin: 1px auto 1px;
+    margin-top: 0px;
+    margin-bottom: 1px;
+}
+
+.tela {
+    margin-top: -10px;
+}
+
+#rpm2 {
+    display: none;
+}
+
+#carro2 {
+    display: none;
+}
+
+#pico2 {
+    display: none;
+}
+
+#myChartfiltro {
+    background-color: #E0E0E0;
+    border-radius: 5px;
+    width: auto;
+    height: auto;
+    /* margin: 1px 10px 1px; */
+    margin-top: 1px;
+    margin-bottom: 11px;
+    /* display: none; */
+    /* margin: auto; */
+}
+
+#myChartClima {
+    background-color: #E0E0E0;
+    border-radius: 5px;
+    width: auto;
+    height: auto;
+    margin: 1px 1px 2px;
+    display: none;
+}

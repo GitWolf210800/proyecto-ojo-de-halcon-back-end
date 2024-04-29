@@ -19,7 +19,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 //rutas
-app.get('/',authorization.soloPublico, (req, res)=> res.sendFile(__dirname + '/pages/login.html'));
+app.get('/eyeHawk', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
+app.get('/', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
+app.get('/login',authorization.soloPublico, (req, res)=> res.sendFile(__dirname + '/pages/login.html'));
 app.get('/register',authorization.soloPublico,(req, res)=> res.sendFile(__dirname + '/pages/register.html'));
 app.get('/admin', authorization.soloAdmin,(req, res)=> res.sendFile(__dirname + '/pages/admin/admin.html'));
 app.get('/limites', authorization.adminLimites,(req, res)=> res.sendFile(__dirname + '/pages/admin/limites.html'));

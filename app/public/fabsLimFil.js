@@ -1,4 +1,4 @@
-document.getElementsByTagName("button")[0].addEventListener("click",()=>{
+document.getElementById("logout").addEventListener("click",()=>{
     document.cookie = 'jwt=; path=/; Expires=thu, 01 Jan 1970 00:00:01 GMT;';
     document.location.href = '/';
 });
@@ -32,6 +32,13 @@ const buttonAction = async (ex)=>{
     .then(data => {
         const fab = data.pop();
         const container = document.querySelector('.instalaciones');
+        const formContainer = document.querySelector('.form-content');
+
+        if(formContainer){
+            while(formContainer.firstElementChild){
+                formContainer.removeChild(formContainer.firstElementChild);
+            }
+        }
 
         while(container.firstElementChild){
             container.removeChild(container.firstElementChild);
@@ -76,6 +83,7 @@ const buttonAction = async (ex)=>{
 
             const divInfoInst = document.createElement('h3');
             divInfoInst.className = 'titulo formdata';
+            divInfoInst.setAttribute('id', 'tituloIns');
             divInfoInst.textContent = join;
             container.appendChild(divInfoInst);
 
@@ -159,7 +167,7 @@ const buttonAction = async (ex)=>{
                 });
                 const resJson = await res.json();
                 if(resJson.message) alert(resJson.message);
-                
+
                 const response = await fetch('http://192.168.3.122:1880/updateLim', {method: 'GET'})
                 .then(()=> console.log('node-red actualizado'))
                 .catch(error => console.error('Error al actualizar node-red', error));
