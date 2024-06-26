@@ -21,6 +21,11 @@ app.use(cookieParser());
 //rutas
 app.get('/eyeHawk', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
 app.get('/', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
+app.get('/carrier1', (req, res)=> res.sendFile(__dirname + '/pages/carrier1.html'));
+app.get('/carrier2', (req, res)=> res.sendFile(__dirname + '/pages/carrier2.html'));
+app.get('/carrier3', (req, res)=> res.sendFile(__dirname + '/pages/carrier3.html'));
+app.get('/carrier4', (req, res)=> res.sendFile(__dirname + '/pages/carrier4.html'));
+app.get('/carrier5', (req, res)=> res.sendFile(__dirname + '/pages/carrier5.html'));
 app.get('/login',authorization.soloPublico, (req, res)=> res.sendFile(__dirname + '/pages/login.html'));
 app.get('/register',authorization.soloPublico,(req, res)=> res.sendFile(__dirname + '/pages/register.html'));
 app.get('/admin', authorization.soloAdmin,(req, res)=> res.sendFile(__dirname + '/pages/admin/admin.html'));

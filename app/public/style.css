@@ -8,6 +8,9 @@ body {
     font-family: sans-serif;
     width: 100%;
 }
+.homeButton{
+    background-color: #333;
+}
 
 .eyeHawk{
     background: none;
@@ -19,10 +22,11 @@ body {
     height: 100px;
     top: 30px;
     left: 20px;
-    background-image:url('iconOjodeHalcon.svg');
+    background-image:url('home_eyeHawk.svg');
     background-size: 80px 80px;
     background-repeat: no-repeat;
     background-position: center;
+    z-index: 1;
 }
 
 .bienvenida{

@@ -16,7 +16,7 @@ connection.connect((error) => {
 export let connection;
 
  function handleDisconnect() {
-	 connection = mysql.createConnection(dbConfig);
+	connection = mysql.createConnection(dbConfig);
 
 	connection.connect((error)=>{
 		if (error) {

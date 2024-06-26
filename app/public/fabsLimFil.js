@@ -1,25 +1,19 @@
+import { decodeJWT } from "./funciones.mjs";
+//import { serverApp } from "./variables.mjs";
+import { serverApp } from "./variables.mjs";
+import { server } from "./variables.mjs";
+
 document.getElementById("logout").addEventListener("click",()=>{
     document.cookie = 'jwt=; path=/; Expires=thu, 01 Jan 1970 00:00:01 GMT;';
     document.location.href = '/';
 });
 
-let todasLasCookies = document.cookie;
-
-function decodeJWT(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-
-const datosUser = decodeJWT(todasLasCookies);
+const datosUser = decodeJWT(document.cookie);
 
 document.getElementById('bienvenida').textContent = `Bienvenido ${datosUser.name}`;
 
 const buttonAction = async (ex)=>{    
-    const res = await fetch('http://192.168.3.122:4000/api/filfab', {
+    const res = await fetch(`${serverApp}/api/filfab`, {
     method: 'POST',
     headers: {
         'content-type' : 'application/json'
@@ -52,7 +46,7 @@ const buttonAction = async (ex)=>{
         }
 
         document.querySelector('.instalaciones').addEventListener('click', async(e)=>{;
-            const res = await fetch('http://192.168.3.122:4000/api/formlimfil', {
+            const res = await fetch(`${serverApp}/api/formlimfil`, {
                 method : 'POST',
                 headers : {
                     'Content-Type' : 'application/json'
@@ -158,7 +152,7 @@ const buttonAction = async (ex)=>{
 
                 const jsonDataSent = `{${dataSent}}`;
 
-                const res = await fetch('http://192.168.3.122:4000/api/formlimsent', {
+                const res = await fetch(`${serverApp}/api/formlimsent`, {
                     method : 'POST',
                     headers : {
                         'content-type' : 'application/json'
@@ -168,7 +162,7 @@ const buttonAction = async (ex)=>{
                 const resJson = await res.json();
                 if(resJson.message) alert(resJson.message);
 
-                const response = await fetch('http://192.168.3.122:1880/updateLim', {method: 'GET'})
+                const response = await fetch(`${server}/updateLim`, {method: 'GET'})
                 .then(()=> console.log('node-red actualizado'))
                 .catch(error => console.error('Error al actualizar node-red', error));
 
