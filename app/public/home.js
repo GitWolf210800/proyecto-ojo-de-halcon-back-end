@@ -1420,6 +1420,10 @@ fab3FiltroCont.addEventListener("mouseout", (e) => {
   const fab3contFilVo = mouseOutf(e, fab3FiltroCont);
 });
 
+fab3FiltroCont.addEventListener("click", (e) => {
+  window.location.href = '/salaClima';
+});
+
 fab3ClimaG30T.addEventListener("mouseover", (e) => {
   const fab3g30TClimaV = ventanaFlotanteClima(
     'fab3_g30_clima',

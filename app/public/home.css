@@ -14,6 +14,32 @@ html {
     height: 100%;
 }
 
+.eyeHawk{
+    background: none;
+    border: none;
+    display: flex;
+    position: absolute;
+    padding: 10px 10px;
+    width: 100px;
+    height: 100px;
+    top: 30px;
+    left: 20px;
+    background-image:url('home_eyeHawk.svg');
+    background-size: 80px 80px;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1;
+}
+
+.novedades {
+    margin-top: 10 vh;
+    padding: 20 vh;
+    background-color: #BDB8B8;
+    font-size: 18px;
+    color: #000;
+    z-index: 1;
+}
+
 svg {
     display: flex;
     justify-content: center;

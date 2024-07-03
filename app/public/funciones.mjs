@@ -1335,36 +1335,40 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
           }
 
           try{
-            const aguaFriaInt = 'entrada_agua_fria_principal';
-            const aguaFriaOut = 'salida_agua_fria_principal';
-            document.getElementById(aguaFriaInt).addEventListener('mouseover', (e) => {
-              const funcion = ventanaFlotanteClima(
-                `${datoss[i].nombre}`,
-                aguaFriaInt,
-                false,
-                e,
-                true,
-                'mediciones_carrier'
-              );
-            });
-            document.getElementById(aguaFriaInt).addEventListener('mouseout', (e) => {
-              const funcionOut = mouseOutfCl(e, document.getElementById(aguaFriaInt));
-             });
-            document.getElementById(aguaFriaOut).addEventListener('mouseover', (e) => {
-              const funcion = ventanaFlotanteClima(
-                `${datoss[i].nombre}`,
-                aguaFriaOut,
-                false,
-                e,
-                true,
-                'mediciones_carrier'
-              );
-            });
-            document.getElementById(aguaFriaOut).addEventListener('mouseout', (e) => {
-              const funcionOut = mouseOutfCl(e, document.getElementById(aguaFriaOut));
-             });
-            document.getElementById(aguaFriaInt).textContent = datoss[i][aguaFriaInt].toFixed(1);
-            document.getElementById(aguaFriaOut).textContent = datoss[i][aguaFriaOut].toFixed(1);
+            const iterar = ['entrada_agua_fria_principal', 'salida_agua_fria_principal', 'tanque_agua_fria_carrier'];
+            for (let i = 0; i < iterar.length; i++){
+              document.getElementById(iterar[i]).addEventListener('mouseover', (e) => {
+                const funcion = ventanaFlotanteClima(
+                  `${datoss[i].nombre}`,
+                  iterar[i],
+                  false,
+                  e,
+                  true,
+                  'mediciones_carrier'
+                );
+              });
+              document.getElementById(iterar[i]).addEventListener('mouseout', (e) => {
+                const funcionOut = mouseOutfCl(e, document.getElementById(iterar[i]));
+               });
+               const number = datoss[i][iterar[i]];
+              if (Number.isInteger(number)){
+                document.getElementById(iterar[i]).textContent = number;
+                if (iterar[i] === 'tanque_agua_fria_carrier'){
+                  const objeto = document.getElementById(`${iterar[i]}_grafico`);
+                  if (number >= 50){
+                    objeto.style.fill = okClima;
+                  }
+                  else if (number < 50) {
+                    objeto.style.fill = alarmClima;
+                  } 
+                  else if (number < 20) {
+                    objeto.style.fill = alertClima;
+                  }
+                }
+              } else {
+                document.getElementById(iterar[i]).textContent = number.toFixed(1);
+              }
+            }
           } catch {
             console.log(`error en ${datoss[i].nombre}`);
           }
@@ -1457,7 +1461,7 @@ async function datosCarrier(instalacion) {
               else if(data[x] === 50) datoDom.style.stroke = paroManual;
             }
 
-            if(x !== 'id_medicion' && x !== 'id_instalacion' && x !== 'fecha' && x !== 'alave' && !x.startsWith('min_') && !x.startsWith('max_')){
+            if(x !== 'id_medicion' && x !== 'id_instalacion' && x !== 'fecha' && x !== 'alave' && !x.startsWith('min_') && !x.startsWith('max_') && !x.startsWith('tanque_')){
                   datoDom.textContent = data[x].toFixed(1);
                   datoDom.addEventListener('mouseover', (e) => {
                     const funcion = ventanaFlotanteClima(

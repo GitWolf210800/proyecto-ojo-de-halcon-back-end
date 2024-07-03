@@ -20,6 +20,7 @@ app.use(cookieParser());
 
 //rutas
 app.get('/eyeHawk', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
+app.get('/salaClima', (req, res)=> res.sendFile(__dirname + '/pages/sala_clima.html'));
 app.get('/', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
 app.get('/carrier1', (req, res)=> res.sendFile(__dirname + '/pages/carrier1.html'));
 app.get('/carrier2', (req, res)=> res.sendFile(__dirname + '/pages/carrier2.html'));
