@@ -62,17 +62,17 @@ const actualizarDatosInterCambiadores = () => {
             if (http.readyState === XMLHttpRequest.DONE) {
                 if (http.status === 200) {
                 // La solicitud fue exitosa, llamar a la función handleResponse con los datos recibidos
-                const date = JSON.parse(http.responseText);
-                console.log(date);
-                for (let x in date){
-                    //console.log(`${x} : ${date[x]}`);
-                    if(x.startsWith('Ent_') || x.startsWith('Sal_') || x.startsWith('Bomba_')){
-                        const element = document.getElementById(x);
-                        if(typeof date[x] !== 'string'){
-                            element.textContent = date[x].toFixed(1);
-                        } else element.textContent = date[x];
+                    const date = JSON.parse(http.responseText);
+                    //console.log(date);
+                    for (let x in date){
+                        //console.log(`${x} : ${date[x]}`);
+                        if(x.startsWith('Ent_') || x.startsWith('Sal_') || x.startsWith('Bomba_')){
+                            const element = document.getElementById(x);
+                            if(typeof date[x] !== 'string'){
+                                element.textContent = date[x].toFixed(1);
+                            } else element.textContent = date[x];
+                        }
                     }
-                }
                 }
             }
         }
@@ -84,4 +84,4 @@ const actualizarDatosInterCambiadores = () => {
 actualizarDatos();
 actualizarDatosInterCambiadores();
 
-
+setInterval(actualizarDatos,actualizarDatosInterCambiadores , 60000);
