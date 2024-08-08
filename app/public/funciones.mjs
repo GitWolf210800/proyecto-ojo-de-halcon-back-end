@@ -25,15 +25,26 @@ var http = new XMLHttpRequest();
 
 ///////////////////////////// popUp windows, Chart variable global, and Colours ///////////////////////
 
-
 const mouseOver = "#58B7D3";
 const ventanaFlotanteclima = document.getElementById("ventanaClima"); 
 const ventanaFlotante = document.getElementById("ventanaFlotante");                 // Here declared in popUp windows, previosly developed in CSS and HTML
+const ventanaFlotanteIn = document.getElementById("ventanaFlotanteInformativa");
 var chartCl;
 var chart;
 var ctxCL = document.getElementById("myChartClima");
 var pasoCl = 1;
 var paso = 1;
+
+function eliminarSubcadena(cadena, subcadenas) {
+  // Verificar si alguna de las subcadenas se encuentra en la cadena y eliminarla
+  subcadenas.forEach(subcadena => {
+      if (cadena.includes(subcadena)) {
+          cadena = cadena.replace(subcadena, '');
+      }
+  });
+
+  return cadena;
+};
 
 const isMobile = () => {                                 //// This function is for detected if is mobile
   return /Mobi|Android/i.test(navigator.userAgent);
@@ -108,6 +119,95 @@ function mouseOutfCl  (e, boton) {  // This function is for disguise popUp windo
 
 };
 
+function mouseOutf (e, boton) {   // This function is for disguise popUp windows filters
+      boton.style.fill = mouseOut;
+      ventanaFlotante.style.display = "none";
+      paso = 1;
+      //const inst = document.getElementById('instalacion').display = 'none';
+      if(chart) window.chart.destroy();
+};
+
+function mouseOutIn (e, boton) {   // This function is for disguise popUp windows filters
+  //boton.style.fill = mouseOut;
+  ventanaFlotanteIn.style.display = "none";
+  paso = 1;
+};
+
+function ventanaFlotanteInformativa(e, datos){
+
+  let x = e.clientX + 15; // Agregar un desplazamiento a la derecha
+  let y = e.clientY;
+  //boton.style.fill = mouseOver;
+
+  const containerText = 'Demanda de agua fría';
+  const container = document.getElementById('datos');
+  const info = document.getElementById('info');
+  info.textContent = containerText;
+  info.style.color = '#fff';
+  let height = 10
+  ventanaFlotanteIn.style.height = `${height}px`;
+
+  while (container.firstElementChild){
+    container.removeChild(container.firstElementChild);
+  };
+
+  for (let x in datos){
+    const divInfoLim = document.createElement('h4');
+    divInfoLim.className = x;
+    divInfoLim.style.color = alarmClima;
+    divInfoLim.textContent = `${x} :  ${datos[x]} %`;
+    container.appendChild(divInfoLim);
+    height = height + 33;
+    ventanaFlotanteIn.style.height = `${height}px`;
+  };
+  
+
+  if (isMobile()){
+    if(window.innerHeight < window.innerWidth){
+      ventanaFlotanteIn.style.border = 'none';
+      ventanaFlotanteIn.style.background = 'linear-gradient(0deg, transparent, #232638)';
+      ventanaFlotanteIn.style.position = 'fixed';
+      ventanaFlotanteIn.style.display = 'flex';
+      ventanaFlotanteIn.style.flexWrap = 'wrap';
+      ventanaFlotanteIn.style.width = '98vw';
+      ventanaFlotanteIn.style.height = '100%';
+      ventanaFlotanteIn.style.left = '0vw';
+      ventanaFlotanteIn.style.top = '0vh';
+      ventanaFlotanteIn.style.zIndex = 999;
+      container.style.position = 'absolute';
+      container.style.top = '8vh';
+      container.style.right = '.5vw';
+      container.style.width = '25vw';
+      container.style.height = '70vh';
+      ventanaFlotanteIn.style.display = "block";
+    } else {
+      ventanaFlotanteIn.style.border = 'none';
+      ventanaFlotanteIn.style.background = 'linear-gradient(180deg, transparent, #232638)';
+      ventanaFlotanteIn.style.display = 'flex';
+      ventanaFlotanteIn.style.flexWrap = 'wrap';
+      ventanaFlotanteIn.style.justifyContent = 'center';
+      ventanaFlotanteIn.style.width = '98vw';
+      ventanaFlotanteIn.style.height = '100%';
+      ventanaFlotanteIn.style.left = '0vw';
+      ventanaFlotanteIn.style.top = 0 + 'px';
+      ventanaFlotanteIn.style.zIndex = 999;
+      container.style.position = 'absolute';
+      container.style.display = 'inline';
+      container.style.top = '35vh';
+      container.style.right = '25vw';
+      container.style.left = '25vw';
+      container.style.width = '90%';
+      container.style.height = '70vh';
+      ventanaFlotanteIn.style.display = "block";
+    }
+  } else {
+    ventanaFlotanteIn.style.left = x + "px";
+    ventanaFlotanteIn.style.top = y + "px";
+    ventanaFlotanteIn.style.display = "block";
+  }
+
+};
+
 function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min, max) {  /// This function is for show data in clima installation and popUp windows adjusted automatically
     //let ctxCL = document.getElementById("myChartClima");
       //const instalacion = document.getElementById("instalacionclima");
@@ -132,7 +232,6 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
         medir: medicion
       };
     }
-    
     // Convertir el objeto JSON a una cadena JSON
     var jsonData = JSON.stringify(requestData);
     
@@ -147,6 +246,7 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
           const date = JSON.parse(http.responseText);
               const dataTempRealcl = date.datos[0];
               const datos = date.datos;
+              console.log('entro');
               if (estandar){
                 nameInst.textContent = `${date.instalacion}, 24Hs`;
               } 
@@ -644,456 +744,329 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
     http.send();
 };
 
-function mouseOutf (e, boton) {   // This function is for disguise popUp windows filters
-      boton.style.fill = mouseOut;
-      ventanaFlotante.style.display = "none";
-      paso = 1;
-      if(chart) window.chart.destroy();
-};
-
 function ventanaFlotanteFiltro  (nombre, boton, e) {    /// This function is for show data in filters installation and popUp windows adjusted automatically
-      let ctxFl = document.getElementById("myChartfiltro");
-      if(window.chart) window.chart.destroy();
-      // Definir la URL del servidor
-      let url = `${server}/filtro24hs`;
-      
-      // Definir el objeto JSON con los detalles de los datos a solicitar
-      let requestData = {
-        instalacion: nombre
-      };
-      
-      // Convertir el objeto JSON a una cadena JSON
-      let jsonData = JSON.stringify(requestData);
-      
-      
-      // Abrir una conexión GET con la URL y enviar los datos JSON en el cuerpo de la solicitud
-      http.open('GET', url + '?data=' + encodeURIComponent(jsonData), true);
-      
-      // Definir el callback para manejar la respuesta del servidor
-      http.onreadystatechange = function() {
-        if (http.readyState === XMLHttpRequest.DONE) {
-          if (http.status === 200) {
-            // La solicitud fue exitosa, llamar a la función handleResponse con los datos recibidos
-            //handleResponse(responseData);
-            const date = JSON.parse(http.responseText);
-            const dataTempReal = date.datos[0];
+  
+  let ctxFl = document.getElementById("myChartfiltro");
+  if(window.chart) window.chart.destroy();
+  // Definir la URL del servidor
+  let url = `${server}/filtro24hs`;
+  
+  // Definir el objeto JSON con los detalles de los datos a solicitar
+  let requestData = {
+    instalacion: nombre
+  };
+  
+  // Convertir el objeto JSON a una cadena JSON
+  let jsonData = JSON.stringify(requestData);
+  
+  
+  // Abrir una conexión GET con la URL y enviar los datos JSON en el cuerpo de la solicitud
+  http.open('GET', url + '?data=' + encodeURIComponent(jsonData), true);
+  
+  // Definir el callback para manejar la respuesta del servidor
+  http.onreadystatechange = function() {
+    if (http.readyState === XMLHttpRequest.DONE) {
+      if (http.status === 200) {
+        // La solicitud fue exitosa, llamar a la función handleResponse con los datos recibidos
+        const date = JSON.parse(http.responseText);     // datos crudos de la base de datos
+        const dataTempReal = date.datos[0];             // captura de los ultimos datos
+        const datos = date.datos;
+        let datoss = [];
+        let limite = [];
+        let limiteA = [];
+        const inst = document.getElementById('instalacion');      // se imprime en el front-end 
+        inst.textContent = `${date.instalacion}`;
+        const container = document.querySelector('.dataFiltro');
+        const graficoDiv = document.getElementById('myChartfiltro');
 
-            for (let x in dataTempReal){
-              if (dataTempReal[x] !== null && typeof dataTempReal[x] !== 'string' && !x.startsWith('lim')){
-                dataTempReal[x] = dataTempReal[x].toFixed(2);
-              }
+        let height = 165;
+        ventanaFlotante.style.height = `${height}px`;
+
+        while (container.firstElementChild){
+          container.removeChild(container.firstElementChild);
+        };
+
+        if (dataTempReal){
+
+          graficoDiv.style.display = 'block';
+
+          for (let x in dataTempReal){
+            if (dataTempReal[x] !== null && typeof dataTempReal[x] !== 'string' && !x.startsWith('lim')){
+              dataTempReal[x] = dataTempReal[x].toFixed(2);
             }
-            
-            if (nombre !== 'fabx_prensa_filtro'){
-              const infoTVent = `Ventilador: (Limite Inf: ${dataTempReal.limVent} Pa)`;
-              const infoVent = `${dataTempReal.ventilador} Pa`;
-              const preFiltroData = dataTempReal.preFiltro;
-              const limPreFiltroData = dataTempReal.limPreFiltro;
-              const picos2Data = dataTempReal.picos2;
-              const limPicos = dataTempReal.limPicos;
-              const rpm2Data = dataTempReal.rpmFiltro2;
-              const limRpmFiltro = dataTempReal.limRpm;
-              const carro2Data = dataTempReal.carro2;
-              const limCarro = dataTempReal.limCarro;
-              const picos2Title = document.getElementById("titlePicos2");
-              const picos2 = document.getElementById("pico2");
-              const carro = document.getElementById("carro");
-              const rpm2Title = document.getElementById("RPM2H");
-              const rpm2 = document.getElementById("rpm2");
-              const carro2Title = document.getElementById("carro2H");
-              const carro2 = document.getElementById("carro2");
-              const inst = document.getElementById("instalacion");
-              const titleVent = (document.getElementById("titleVent").textContent = infoTVent);
-              const vent = document.getElementById("vent");
-              inst.textContent = `${date.instalacion}`;
-        
-              let ultID = dataTempReal.ID;
-              //let ultMed = dataTempReal.fecha.getTime();
-        
-              if (nombre !== 'fab4_cardas_filtro'){
-                document.getElementById('titleTela').style.display = 'block';
-                document.getElementById('filtroVent').style.display = 'block';
-                document.getElementById('myChartfiltro').style.display = 'block';
-                const limtieG = dataTempReal.limFiltroVent_A + 50;
-                const datos = date.datos;
-                const infoTFiltroV = `Diferencial de la Tela: (Limite Sup: ${dataTempReal.limFiltroVent} Pa)`;
-                const infoFiltroVent = `${dataTempReal.filtroVentilador} Pa`;
-                const infoTpicos = `Picos: (Limite Inf: ${dataTempReal.limPicos} Pa)`;
-                const infoPicos = `${dataTempReal.picos} Pa`;
-                const infoTRpm = `RPM: (Limite Inf: ${dataTempReal.limRpm} RPM)`;
-                const infoRpm = `${dataTempReal.rpmFiltro} RPM`;
-                const infoTCarro = `Carro: (Limite Inf: ${dataTempReal.limCarro})`;
-                const infoCarro = `${dataTempReal.carro}`;
-                const titleFiltroV = (document.getElementById("titleTela").textContent = infoTFiltroV);
-                const diferencial = document.getElementById("filtroVent");
-                const titlePico = (document.getElementById("titlePicos").textContent = infoTpicos);
-                const pico = document.getElementById("pico");
-                const titleRpm = (document.getElementById("titleRpm").textContent = infoTRpm);
-                const rpm = document.getElementById("rpm");
-                const titleCarro = (document.getElementById("titleCarro").textContent = infoTCarro);
-                let datoss = [];
-                let limite = [];
-                let limiteA = [];
-        
-                for (let i = 0; i < datos.length; i++) {  // here running bucle for array data since dataBase server
-      
-                  let fecha = new Date(datos[i].fecha);
-                  let hora = fecha.getHours().toString().padStart(2, "0");
-                  let minuto = fecha.getMinutes().toString().padStart(2, "0");
-                  let horaText = `${hora}:${minuto}`;
-                  datoss.push({
-                     x: horaText,
-                     y: `${parseInt(datos[i].filtroVentilador)}`,
-                    });
-                  limite.push({
-                    x: horaText,
-                    y: `${datos[i].limFiltroVent}`,
-                    });
-                  limiteA.push({
-                    x : horaText,
-                    y : `${datos[i].limFiltroVent_A}`
-                  });
-      
-                  }
-      
-                  limiteA.reverse();
-                  limite.reverse();
-                  datoss.reverse();
-                  //console.log(limiteA);
-             window.chart = new Chart(ctxFl, {
-                  type: "line",
-                  data: {
-                  datasets: [
-                      {
-                        label: "Diferencial",
-                        borderColor: "blue",
-                        borderWidth: 1.5,
-                        data: datoss,
-                        //yAxisID: 'y',
-                      },
-                      {
-                        label: "Límite Optimo",
-                        borderColor: "#E6C000",
-                        borderWidth: 1,
-                        data: limite,
-                        //yAxisID: 'y1',
-                      },
-                      {
-                        label: `Limite Alarma ${dataTempReal.limFiltroVent_A} Pa`,
-                        borderColor: "#FF1111",
-                        borderWidth: 1,
-                        data: limiteA,
-                        //yAxisID: 'y1',
-                      }
-                    ],
-                  },
-                  options: {
-                    elements: {
-                      point: {
-                        radius: 0, // Establecer el radio de los puntos en 0 para ocultarlos
-                      },
-                    },
-                    animations: {
-                        /*tension: {
-                        },*/
-                    },
-                    scales: {
-                      y: {
-                        max: limtieG,
-                        min: 0,
-                       /* title: {
-                                          display: true,
-                                          text: 'Valores',
-                                        },*/
-                      },
-                      },
-                    },
-                  });
-        
-                            ////////// Validations status with limits data and types data is installations
-              diferencial.textContent = infoFiltroVent;
-      
-              if (dataTempReal.filtroVentilador > dataTempReal.limFiltroVent && dataTempReal.filtroVentilador < dataTempReal.limFiltroVent_A){
-                diferencial.style.color = alarmClima
-              }
-              else if (dataTempReal.filtroVentilador > dataTempReal.limFiltroVent_A){
-                diferencial.style.color = textNotOk
-              }
-              else diferencial.style.color = textOk
-        
-              pico.textContent = infoPicos;
-              dataTempReal.picos < dataTempReal.limPicos
-                  ? (pico.style.color = textNotOk)
-                  : (pico.style.color = textOk);
-              rpm.textContent = infoRpm;
-              dataTempReal.rpmFiltro < dataTempReal.limRpm
-                  ? (rpm.style.color = textNotOk)
-                  : (rpm.style.color = textOk);
-              carro.textContent = infoCarro;
-              dataTempReal.carro < dataTempReal.limCarro
-                  ? (carro.style.color = textNotOk)
-                  : (carro.style.color = textOk);
-        
-              }
-        
-              vent.textContent = infoVent;
-              dataTempReal.ventilador < dataTempReal.limVent
-                  ? (vent.style.color = textNotOk)
-                  : (vent.style.color = textOk);
-        
-              (dataTempReal.carro === null) 
-                  ? (carro.style.display = "none", document.getElementById("titleCarro").style.display = "none") 
-                  : (carro.style.display = "block", document.getElementById("titleCarro").style.display = "block");
-        
-              (dataTempReal.rpmFiltro === null)
-                  ? (rpm.style.display = "none", document.getElementById("titleRpm").style.display = "none")
-                  : (rpm.style.display = "block", document.getElementById("titleRpm").style.display = "block");
-        
-              if (nombre === "fab4_cardas_filtro"){
-                    document.getElementById('titleTela').style.display = 'none';
-                    document.getElementById('filtroVent').style.display = 'none';
-                    document.getElementById('myChartfiltro').style.display = 'none';
-                    const preFiltroTitle = document.getElementById("preFiltroH");
-                    const preFiltro = document.getElementById("preFiltro");
-                    //const ventTitle = document.getElementById("titleVent");
-                    //const vent = document.getElementById("vent");
-                    const picosTitle = document.getElementById("titlePicos");
-                    const picos = document.getElementById("pico");
-                    preFiltroTitle.style.display = "block";
-                    preFiltro.style.display = "block";
-                    preFiltro.textContent = `${dataTempReal.preFiltro} Pa`;
-                    
-                    picosTitle.style.display = "none";
-                    picos.style.display = "none";           
-        
-                    document.getElementById("titleVent").textContent
-               } else {
-                    const preFiltroTitle = document.getElementById("preFiltroH").style.display = "none";
-                    const preFiltro = document.getElementById("preFiltro").style.display = "none";
-                    const ventTitle = document.getElementById("titleVent").style.display = "block";
-                    const vent = document.getElementById("vent").style.display = "block";
-                    const picosTitle = document.getElementById("titlePicos").style.display = "block";
-                    const picos = document.getElementById("pico").style.display = "block";
-                    }
-        
-                if(preFiltroData !== null) {
-                   const preFiltroTitle = document.getElementById("preFiltroH");
-                   const preFiltro = document.getElementById("preFiltro");
-                   preFiltroTitle.style.display = "block";
-                   preFiltro.style.display = "block";
-                   preFiltroTitle.textContent = `Pre-Filtro, (Limite Inf: ${dataTempReal.limPreFiltro}) Pa`
-                   preFiltro.textContent = `${dataTempReal.preFiltro} Pa`
-        
-                if (preFiltroData < limPreFiltroData) {
-                    preFiltro.style.color = textNotOk;
-                } else preFiltro.style.color = textOk;
-        
-                } 
-        
-                if (picos2Data !== null) {
-                    picos2Title.style.display = "block";
-                    picos2.style.display = "block";
-                    picos2Title.textContent = `Picos-2, Limite: ${dataTempReal.limPicos}`;
-                    picos2.textContent = `${dataTempReal.picos2} Pa`;
-        
-                (picos2Data < limPicos)
-                    ? (picos2.style.color = textNotOk)
-                    : (picos2.style.color = textOk);
-        
-               } else {
-                    picos2Title.style.display = "none";
-                    picos2.style.display = "none";
-                }
-        
-                    
-                if (rpm2Data !== null) {
-                    rpm2Title.style.display = "block";
-                    rpm2.style.display = "block";
-                    rpm2Title.textContent = `RPM-2, Limite: ${limRpmFiltro}RPM`;
-                    rpm2.textContent = `${rpm2Data} RPM`;
-                if (rpm2Data < limRpmFiltro) rpm2.style.color = textNotOk;
-                else rpm2.style.color = textOk;
-        
-                } else { 
-                    rpm2Title.style.display = "none";
-                    rpm2.style.display = "none";    
-                    }
-        
-                if (carro2Data !== null) {
-                    carro2Title.style.display = "block";
-                    carro2.style.display = "block";
-                    carro2Title.textContent = `Carro-2, (Limite inf: ${limCarro})`
-                    carro2.textContent = `${carro2Data}`
-        
-               if (carro2Data < limCarro) {
-                    carro2.style.color = textNotOk;
-               } else carro2.style.color = textOk;
-               } else {
-                  carro2Title.style.display = "none";
-                  carro2.style.display = "none";
-               }
-        
-            
-      
-            if (preFiltroData !== null && rpm2Data === null && picos2Data === null) ventanaFlotante.style.height = "375px";
-      
-            else if (preFiltroData === null && rpm2Data !== null && picos2Data !== null && carro2Data !== null) ventanaFlotante.style.height = "435px";
-      
-            else if (preFiltroData === null && rpm2Data !== null && picos2Data === null && carro2Data !== null) ventanaFlotante.style.height = "400px";
-      
-            else if (preFiltroData !== null && rpm2Data !== null && picos2Data !== null && carro2Data !== null) ventanaFlotante.style.height = "470px";
-      
-            else if (preFiltroData === null && picos2Data !== null ) ventanaFlotante.style.height = "380px";
-      
-            else ventanaFlotante.style.height = "330px";
-            
-            }
-          } else {
-            // Ocurrió un error en la solicitud
-            console.error('Error en la solicitud: ' + http.status);
           }
+  
+          for(let x in dataTempReal){
+            if((x.startsWith('min_') || x.startsWith('max_') || x.startsWith('max_alarma')) && (dataTempReal[x] !== null && parseInt(dataTempReal[x]) !== 0)){
+              let nombre = eliminarSubcadena(x, ['max_alarma_', 'max_', 'min_']);
+              const partes = nombre.split('_');
+              const nombreDato = partes.join('');
+  
+              if(!document.querySelector(`.${nombreDato}INFO`)){
+                const divInfoLim = document.createElement('h4');
+                divInfoLim.className = x;
+                divInfoLim.textContent = `${nombre} : (Limite: ${dataTempReal[x]})`;
+                container.appendChild(divInfoLim);
+  
+                const divInfo = document.createElement('p');
+                divInfo.className = `${nombreDato}INFO tittle`;
+                divInfo.textContent = `${dataTempReal[nombre]}`;
+                container.appendChild(divInfo);
+
+                height = height + 35;                
+                ventanaFlotante.style.height = `${height}px`;
+                //console.log(`${x} : ${height}`);
+              }
+  
+              const info = document.querySelector(`.${nombreDato}INFO`);
+  
+              if(x.startsWith('min')){
+                (parseFloat(dataTempReal[nombre]) < parseInt(dataTempReal[`min_${nombre}`]))
+                  ? info.style.color = textNotOk
+                  : info.style.color = textOk;
+              } else if(x.startsWith('max')){
+                (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_${nombre}`]))
+                  ? info.style.color = textNotOk
+                  : info.style.color = textOk;
+              }
+  
+              if(x.includes('filtro_ventilador')){
+                (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_${nombre}`]))
+                  ? info.style.color = alarmClima
+                  : info.style.color = textOk;
+  
+                (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_alarma${nombre}`]))
+                  ? (info.style.color = textNotOk, console.log('entro el if'))
+                  : info.style.color = textOk;
+              }
+            }
+
+          };
+
+          const limtieG = parseInt(dataTempReal.max_alarma_filtro_ventilador) + 50;
+
+          for (let i = 0; i < datos.length; i++) {  // here running bucle for array data since dataBase server
+            let fecha = new Date(datos[i].fecha);
+            let hora = fecha.getHours().toString().padStart(2, "0");
+            let minuto = fecha.getMinutes().toString().padStart(2, "0");
+            let horaText = `${hora}:${minuto}`;
+            datoss.push({
+               x: horaText,
+               y: `${parseInt(datos[i].filtro_ventilador)}`,
+              });
+            limite.push({
+              x: horaText,
+              y: `${datos[i].max_filtro_ventilador}`,
+              });
+            limiteA.push({
+              x : horaText,
+              y : `${datos[i].max_alarma_filtro_ventilador}`
+            });
+
+            }
+
+            limiteA.reverse();
+            limite.reverse();
+            datoss.reverse();
+
+
+            window.chart = new Chart(ctxFl, {
+              type: "line",
+              data: {
+              datasets: [
+                  {
+                    label: "Diferencial",
+                    borderColor: "blue",
+                    borderWidth: 1.5,
+                    data: datoss,
+                    //yAxisID: 'y',
+                  },
+                  {
+                    label: "Límite Optimo",
+                    borderColor: "#E6C000",
+                    borderWidth: 1,
+                    data: limite,
+                    //yAxisID: 'y1',
+                  },
+                  {
+                    label: `Limite Alarma ${parseInt(dataTempReal.max_alarma_filtro_ventilador)} Pa`,
+                    borderColor: "#FF1111",
+                    borderWidth: 1,
+                    data: limiteA,
+                    //yAxisID: 'y1',
+                  }
+                ],
+              },
+              options: {
+                elements: {
+                  point: {
+                    radius: 0, // Establecer el radio de los puntos en 0 para ocultarlos
+                  },
+                },
+                scales: {
+                  y: {
+                    max: limtieG,
+                    min: 0,
+                  },
+                  },
+                },
+              });
+       
         }
-      };
-      
-      // Enviar la solicitud al servidor
-      http.send();
-      
-      let x = e.clientX + 15; // Agregar un desplazamiento a la derecha
-      let y = e.clientY;
-      boton.style.fill = mouseOver;
-      
-      if (e.clientY >= 45 && e.clientY < 100) y = y + 30;
-      
-      else if (e.clientY >= 400 && e.clientY < 600 && e.clientX >= 100 && e.clientX < 200) {
-        y = y - 380;
-        x = x + 50;
-      } 
-      
-      else if (e.clientY >= 300 && e.clientY < 450 && e.clientX >= 1200 && e.clientX < 1400) {
-        y = y - 280;
-        x = x - 360;
-      } 
-      else if (e.clientY >= 200 && e.clientY < 300 && e.clientX >= 1000) {
-        y = y - 280;
-        x = x - 400;
-      }
-      else if (e.clientY >= 300 && e.clientY < 400 && e.clientX >= 1000) {
-        y = y - 250;
-        x = x - 400;
-      }
-      else if (e.clientY >= 300 && e.clientY < 400 && e.clientX >= 300 && e.clientX < 400) {
-        y = y - 280;
-        x = x + 30;
-      } 
-      else if (e.clientY >= 400 && e.clientY < 500 && e.clientX >= 200 && e.clientX < 300) {
-        y = y - 360;
-        x = x + 50;
-      } 
-      else if (e.clientY >= 400 && e.clientY < 500 && e.clientX >= 400 && e.clientX < 500) {
-        y = y - 360;
-        x = x - 350;
-      }
-      else if (e.clientY >= 600 && e.clientY < 700 && e.clientX >= 500 && e.clientX < 600){
-        x = x - 345;
-        y = y - 430;
-      }
-      else if (e.clientY >= 500 && e.clientY < 700 && e.clientX >= 200 && e.clientX < 500) {
-        y = y - 360;
-        x = x + 25;
-      }
-      else if (e.clientY >= 400 && e.clientY < 700 && e.clientX >= 500) {
-        y = y - 360;
-        x = x - 345;
-      }
-      else if (e.clientY >= 400 && e.clientY < 600 && e.clientX >= 780) {
-        y = y - 360;
-        x = x - 330;
-      }
-      else if (e.clientY >= 700 && e.clientY < 900 && e.clientX >= 800 && e.clientX < 900) {
-        y = y - 360;
-        x = x + 40;
-      }
-      else if (e.clientY >= 100 && e.clientY < 200) {
-        y = y + 30;
-      }
-      else if (e.clientY >= 200 && e.clientY < 300) {
-        y = y - 200;
-        x = x + 25;
-      } else if (e.clientY >= 300 && e.clientY < 400) {
-        y = y - 330;
-        x = x + 20;
-      }
-      else if (e.clientY >= 400 && e.clientY < 500) {
-        y = y - 360;
-        x = x - 310;
-      } else if (e.clientY >= 500 && e.clientY < 600) {
-        y = y - 360;
-        x = x - 310;
-      } else if (e.clientY >= 600 && e.clientY < 700) {
-        y = y - 360;
-        x = x - 35;
-      } else y = y - 50;
-      
-      
-      if (isMobile()){
-        if(window.innerHeight < window.innerWidth){
-          const dataDiv = document.getElementById('dataFiltroo');
-          const chartFil = document.querySelector('.grafica');
-          ventanaFlotante.style.border = 'none';
-          ventanaFlotante.style.background = 'linear-gradient(0deg, transparent, #232638)';
-          ventanaFlotante.style.position = 'fixed';
-          ventanaFlotante.style.display = 'flex';
-          ventanaFlotante.style.flexWrap = 'wrap';
-          ventanaFlotante.style.width = '98vw';
-          ventanaFlotante.style.height = '100%';
-          ventanaFlotante.style.left = '0vw';
-          ventanaFlotante.style.top = '0vh';
-          ventanaFlotante.style.zIndex = 999;
-          chartFil.style.position = 'absolute';
-          chartFil.style.left = '.5vw';
-          chartFil.style.right = '.5vw';
-          chartFil.style.height = '65vh';
-          chartFil.style.width = '87vw';
-          dataDiv.style.position = 'absolute';
-          dataDiv.style.top = '8vh';
-          dataDiv.style.right = '.5vw';
-          dataDiv.style.width = '25vw';
-          dataDiv.style.height = '70vh';
-          ventanaFlotante.style.display = "block";
-        } else {
-          const dataDiv = document.getElementById('dataFiltroo');
-          const chartFil = document.querySelector('.grafica');
-          ventanaFlotante.style.border = 'none';
-          ventanaFlotante.style.background = 'linear-gradient(180deg, transparent, #232638)';
-          ventanaFlotante.style.display = 'flex';
-          ventanaFlotante.style.flexWrap = 'wrap';
-          ventanaFlotante.style.justifyContent = 'center';
-          ventanaFlotante.style.width = '98vw';
-          ventanaFlotante.style.height = '100%';
-          ventanaFlotante.style.left = '0vw';
-          ventanaFlotante.style.top = 0 + 'px';
-          ventanaFlotante.style.zIndex = 999;
-          chartFil.style.position = 'absolute';
-          chartFil.style.left = '.5vw';
-          chartFil.style.height = '85vh';
-          chartFil.style.width = '100vw';
-          dataDiv.style.position = 'absolute';
-          dataDiv.style.display = 'inline';
-          //dataDiv.style.flexWrap = 'wrap';
-          //dataDiv.style.justifyContent = 'center';
-          dataDiv.style.top = '35vh';
-          dataDiv.style.right = '25vw';
-          dataDiv.style.left = '25vw';
-          dataDiv.style.width = '90%';
-          dataDiv.style.height = '70vh';
-          ventanaFlotante.style.display = "block";
+        else {
+          graficoDiv.style.display = 'none';
+          ventanaFlotante.style.height = "40px";
+          const divInfoLim = document.createElement('h3');
+          divInfoLim.textContent = `No Hay Registros Recientes`;
+          container.appendChild(divInfoLim);
         }
-      } else {
-        ventanaFlotante.style.left = x + "px";
-        ventanaFlotante.style.top = y + "px";
-        ventanaFlotante.style.display = "block";
-      }
-      
+      } 
+      else {
+        // Ocurrió un error en la solicitud
+        console.error('Error en la solicitud: ' + http.status);
+        }
+    }
+  };
+  
+  // Enviar la solicitud al servidor
+  http.send();
+  
+  let x = e.clientX + 15; // Agregar un desplazamiento a la derecha
+  let y = e.clientY;
+  boton.style.fill = mouseOver;
+
+  console.log(` x : ${e.clientX}`);
+  console.log(` y : ${e.clientY}`);
+  
+  if (e.clientY >= 45 && e.clientY < 100) y = y + 30;
+  
+  else if (e.clientY >= 400 && e.clientY < 600 && e.clientX >= 100 && e.clientX < 200) {
+    y = y - 380;
+    x = x + 50;
+  } 
+  
+  else if (e.clientY >= 300 && e.clientY < 750 && e.clientX >= 500 && e.clientX < 1450) {
+    y = y - 280;
+    x = x - 360;
+  } 
+  else if (e.clientY >= 200 && e.clientY < 300 && e.clientX >= 1000) {
+    y = y - 280;
+    x = x - 400;
+  }
+  else if (e.clientY >= 300 && e.clientY < 400 && e.clientX >= 1000) {
+    y = y - 250;
+    x = x - 400;
+  }
+  else if (e.clientY >= 300 && e.clientY < 500 && e.clientX >= 300 && e.clientX < 400) {
+    y = y - 280;
+    x = x + 30;
+  } 
+  else if (e.clientY >= 400 && e.clientY < 500 && e.clientX >= 200 && e.clientX < 300) {
+    y = y - 360;
+    x = x + 50;
+  } 
+  else if (e.clientY >= 400 && e.clientY < 500 && e.clientX >= 400 && e.clientX < 500) {
+    y = y - 360;
+    x = x - 350;
+  }
+  else if (e.clientY >= 600 && e.clientY < 700 && e.clientX >= 500 && e.clientX < 600){
+    x = x - 345;
+    y = y - 430;
+  }
+  else if (e.clientY >= 500 && e.clientY < 700 && e.clientX >= 200 && e.clientX < 500) {
+    y = y - 360;
+    x = x + 25;
+  }
+  else if (e.clientY >= 400 && e.clientY < 700 && e.clientX >= 500) {
+    y = y - 360;
+    x = x - 345;
+  }
+  else if (e.clientY >= 400 && e.clientY < 600 && e.clientX >= 780) {
+    y = y - 360;
+    x = x - 330;
+  }
+  else if (e.clientY >= 700 && e.clientY < 900 && e.clientX >= 800 && e.clientX < 900) {
+    y = y - 360;
+    x = x + 40;
+  }
+  else if (e.clientY >= 100 && e.clientY < 200) {
+    y = y + 30;
+  }
+  else if (e.clientY >= 200 && e.clientY < 300) {
+    y = y - 200;
+    x = x + 25;
+  } else if (e.clientY >= 300 && e.clientY < 400) {
+    y = y - 330;
+    x = x + 20;
+  }
+  else if (e.clientY >= 400 && e.clientY < 500) {
+    y = y - 360;
+    x = x - 310;
+  } else if (e.clientY >= 500 && e.clientY < 600) {
+    y = y - 360;
+    x = x - 310;
+  } else if (e.clientY >= 600 && e.clientY < 700) {
+    y = y - 360;
+    x = x - 35;
+  } else y = y - 50;
+  
+  if (isMobile()){
+    if(window.innerHeight < window.innerWidth){
+      const dataDiv = document.getElementById('dataFiltroo');
+      const chartFil = document.querySelector('.grafica');
+      ventanaFlotante.style.border = 'none';
+      ventanaFlotante.style.background = 'linear-gradient(0deg, transparent, #232638)';
+      ventanaFlotante.style.position = 'fixed';
+      ventanaFlotante.style.display = 'flex';
+      ventanaFlotante.style.flexWrap = 'wrap';
+      ventanaFlotante.style.width = '98vw';
+      ventanaFlotante.style.height = '100%';
+      ventanaFlotante.style.left = '0vw';
+      ventanaFlotante.style.top = '0vh';
+      ventanaFlotante.style.zIndex = 999;
+      chartFil.style.position = 'absolute';
+      chartFil.style.left = '.5vw';
+      chartFil.style.right = '.5vw';
+      chartFil.style.height = '65vh';
+      chartFil.style.width = '87vw';
+      dataDiv.style.position = 'absolute';
+      dataDiv.style.top = '8vh';
+      dataDiv.style.right = '.5vw';
+      dataDiv.style.width = '25vw';
+      dataDiv.style.height = '70vh';
+      ventanaFlotante.style.display = "block";
+    } else {
+      const dataDiv = document.getElementById('dataFiltroo');
+      const chartFil = document.querySelector('.grafica');
+      ventanaFlotante.style.border = 'none';
+      ventanaFlotante.style.background = 'linear-gradient(180deg, transparent, #232638)';
+      ventanaFlotante.style.display = 'flex';
+      ventanaFlotante.style.flexWrap = 'wrap';
+      ventanaFlotante.style.justifyContent = 'center';
+      ventanaFlotante.style.width = '98vw';
+      ventanaFlotante.style.height = '100%';
+      ventanaFlotante.style.left = '0vw';
+      ventanaFlotante.style.top = 0 + 'px';
+      ventanaFlotante.style.zIndex = 999;
+      chartFil.style.position = 'absolute';
+      chartFil.style.left = '.5vw';
+      chartFil.style.height = '85vh';
+      chartFil.style.width = '100vw';
+      dataDiv.style.position = 'absolute';
+      dataDiv.style.display = 'inline';
+      dataDiv.style.top = '35vh';
+      dataDiv.style.right = '25vw';
+      dataDiv.style.left = '25vw';
+      dataDiv.style.width = '90%';
+      dataDiv.style.height = '70vh';
+      ventanaFlotante.style.display = "block";
+    }
+  } else {
+    ventanaFlotante.style.left = x + "px";
+    ventanaFlotante.style.top = y + "px";
+    ventanaFlotante.style.display = "block";
+  }
+
 };
 
 function puestoClimaRef (botonTemp, botonHum, textTemp, textHum, data, instalacion, botonEnt, textEnt) {  // This function is for intected witch objects SVG, in map installations adjustement colors according to, limits and show now status data information
@@ -1309,6 +1282,25 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
       if (sector.status == 200) {
         const date = JSON.parse(sector.responseText);
         const datoss = date.datos;
+        const docId = 'demanda_agua_fria';
+        const grafico = document.getElementById(`${docId}_grafico`);
+        const text = document.getElementById(`${docId}_text`);
+        //console.log(date);
+
+        if(grafico){
+          if(date[docId]){
+            grafico.style.fill = '#000';
+            text.style.fill = alarmClima;
+            text.textContent = Object.keys(date[docId]).length;
+            grafico.style.display = 'block';
+            text.style.display = 'block';
+            text.addEventListener('mouseover', (e) => {ventanaFlotanteInformativa(e, date[docId])});
+            text.addEventListener('mouseout', (e) => {mouseOutIn(e)});
+          } else {
+            grafico.style.display = 'none';
+            text.style.display = 'none';
+          }
+        }
     
         for (let i = 0; i < datoss.length; i++){
           const carrierText = document.getElementById(`${datoss[i].nombre}Text`);
@@ -1422,7 +1414,7 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
     return JSON.parse(jsonPayload);
   } else return false;
   
-}
+};
 
 async function datosCarrier(instalacion) {
 
@@ -1485,7 +1477,7 @@ async function datosCarrier(instalacion) {
           };
       }
 
-}
+};
 
 export {
     decodeJWT, 

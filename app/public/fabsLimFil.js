@@ -92,7 +92,7 @@ const buttonAction = async (ex)=>{
             let keys = [];
 
             for(let x in datos){
-                if (x !== 'id_instalacion' && x !== 'nombre'){
+                if (typeof datos[x] !== 'string' && !x.startsWith('id')){
                     keys.push(x);
                     let text = x.replace('lim', '');
                     (text === 'FiltroVent')

@@ -75,17 +75,17 @@ function formLimFil(req, res, next){
         const query = `SELECT STRAIGHT_JOIN 
                         i.id_instalacion,
                         i.nombre,
-                        t.limPrefiltro,
-                        t.limFiltro,
-                        t.limFiltroVent,
-                        t.limFiltroVent_A,
-                        t.limVent,
-                        t.limPicos,
-                        t.limPicos2,
-                        t.limRpm,
-                        t.limRpm2,
-                        t.limCarro,
-                        t.limCarro2
+                        t.min_prefiltro,
+                        t.min_filtro,
+                        t.max_filtro_ventilador,
+                        t.max_alarma_filtro_ventilador,
+                        t.min_ventilador,
+                        t.min_picos,
+                        t.min_picos2,
+                        t.min_rpm_filtro,
+                        t.min_rpm_filtro2,
+                        t.min_carro,
+                        t.min_carro2
                      FROM filtros_limites t
                      JOIN instalaciones i
                      ON i.id_instalacion = t.id_instalacion

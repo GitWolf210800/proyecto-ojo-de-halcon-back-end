@@ -134,10 +134,37 @@ h4, p {
     border: 1px solid #ccc;
     border-radius: 7px;
     padding: 10px;
-    z-index: 1;
+    z-index: 555;
     margin: 0 auto;
     width: 500px;
     height: 255px;
+}
+
+#ventanaFlotanteInformativa{
+    display: none;
+    background-color: #626262;
+    color: #f0f0f0;
+    text-align: justify;
+    position: fixed;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    padding: 10px;
+    z-index: 999;
+    margin: 0 auto;
+    width: 180px;
+    height: 130px;
+}
+
+#datos {
+    font-size : 16px;
+}
+
+#demanda_agua_fria_grafico {
+    display: none;
+}
+
+#demanda_agua_fria_text {
+    display: none;
 }
 
 

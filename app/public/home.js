@@ -1,4 +1,4 @@
-/* ojoDeHalcon Version 2.0
+/* ojoDeHalcon Version 3.4
 
  ! Software Developed by @GitWolf210800 --gitHub // Ezequiel Quintana Torrent, since proyect 2023 - 2024
    For: Tipoiti S.A.T.I.C. in Innovacion & Desarrollo
@@ -763,18 +763,14 @@ fab6FiltroPrep.addEventListener("mouseover", (e) => {
     fab6FiltroPrep,
     e
   );
-  /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6FiltroPrep.addEventListener("mouseout", (e) => {
   const fab6prepFilVo = mouseOutf(e, fab6FiltroPrep);
 });
 
-/*
-fab6FiltroPrep.addEventListener("mouseover", () => {
-  window.location.href = "filtroPrepFab6/index.html";
-});*/
+
 
 fab6ClimaPrepT.addEventListener("mouseover", (e) => {
   const fab6prepTClimaV = ventanaFlotanteClima(
@@ -834,8 +830,7 @@ fab6ClimaContT.addEventListener("mouseover", (e) => {
     fab6ClimaContT,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6ClimaContT.addEventListener("mouseout", (e) => {
@@ -849,8 +844,7 @@ fab6ClimaContH.addEventListener("mouseover", (e) => {
     fab6ClimaContH,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6ClimaContH.addEventListener("mouseout", (e) => {
@@ -864,8 +858,7 @@ fab6HumAbsCont.addEventListener("mouseover", (e) => {
     fab6HumAbsCont,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6HumAbsCont.addEventListener("mouseout", (e) => {
@@ -892,8 +885,7 @@ fab6ClimaBobT.addEventListener("mouseover", (e) => {
     fab6ClimaBobT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6ClimaBobT.addEventListener("mouseout", (e) => {
@@ -907,8 +899,7 @@ fab6ClimaBobH.addEventListener("mouseover", (e) => {
     fab6ClimaBobH,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6ClimaBobH.addEventListener("mouseout", (e) => {
@@ -922,8 +913,7 @@ fab6HumAbsBob.addEventListener("mouseover", (e) => {
     fab6HumAbsBob,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab6HumAbsBob.addEventListener("mouseout", (e) => {
@@ -939,8 +929,6 @@ fab4FiltroBatan.addEventListener("mouseover", (e)=> {
     e
   );
 
-  /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
 });
 
 fab4FiltroBatan.addEventListener("mouseout", (e) => {
@@ -982,8 +970,7 @@ fab4ClimaPrepT.addEventListener("mouseover", (e) => {
     fab4ClimaPrepT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4ClimaPrepT.addEventListener("mouseout", (e) => {
@@ -997,8 +984,7 @@ fab4ClimaPrepH.addEventListener("mouseover", (e) => {
     fab4ClimaPrepH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4ClimaPrepH.addEventListener("mouseout", (e) => {
@@ -1012,8 +998,7 @@ fab4HumAbsPrep.addEventListener("mouseover", (e) => {
     fab4HumAbsPrep,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4HumAbsPrep.addEventListener("mouseout", (e) => {
@@ -1027,8 +1012,7 @@ fab4ClimaOpenEndT.addEventListener("mouseover", (e) => {
     fab4ClimaOpenEndT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4ClimaOpenEndT.addEventListener("mouseout", (e) => {
@@ -1042,8 +1026,7 @@ fab4ClimaOpenEndH.addEventListener("mouseover", (e) => {
     fab4ClimaOpenEndH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4ClimaOpenEndH.addEventListener("mouseout", (e) => {
@@ -1056,8 +1039,7 @@ fab4FiltroRetor.addEventListener("mouseover", (e)=> {
     fab4FiltroRetor,
     e
   );
-  /*console.log(`X: ${e.clientX}`);
-  console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4FiltroRetor.addEventListener("mouseout", (e) => {
@@ -1071,8 +1053,7 @@ fab4ClimaRetorT.addEventListener("mouseover", (e) => {
     fab4ClimaRetorT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4ClimaRetorT.addEventListener("mouseout", (e) => {
@@ -1086,8 +1067,7 @@ fab4ClimaRetorH.addEventListener("mouseover", (e) => {
     fab4ClimaRetorH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab4ClimaRetorH.addEventListener("mouseout", (e) => {
@@ -1104,8 +1084,7 @@ fab3FiltroEx8.addEventListener("mouseover", (e)=> {
     fab3FiltroEx8,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3FiltroEx8.addEventListener("mouseout", (e) => {
@@ -1119,8 +1098,7 @@ fab3ClimaC80T.addEventListener("mouseover", (e) => {
     fab3ClimaC80T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaC80T.addEventListener("mouseout", (e) => {
@@ -1134,8 +1112,7 @@ fab3ClimaC80H.addEventListener("mouseover", (e) => {
     fab3ClimaC80H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaC80H.addEventListener("mouseout", (e) => {
@@ -1149,8 +1126,7 @@ fab3ClimaC50T.addEventListener("mouseover", (e) => {
     fab3ClimaC50T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaC50T.addEventListener("mouseout", (e) => {
@@ -1164,8 +1140,7 @@ fab3ClimaC50H.addEventListener("mouseover", (e) => {
     fab3ClimaC50H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaC50H.addEventListener("mouseout", (e) => {
@@ -1179,8 +1154,7 @@ fab3C50HumAbs.addEventListener("mouseover", (e) => {
     fab3C50HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3C50HumAbs.addEventListener("mouseout", (e) => {
@@ -1194,8 +1168,7 @@ fab3ClimaPeiT.addEventListener("mouseover", (e) => {
     fab3ClimaPeiT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaPeiT.addEventListener("mouseout", (e) => {
@@ -1209,8 +1182,7 @@ fab3ClimaPeiH.addEventListener("mouseover", (e) => {
     fab3ClimaPeiH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaPeiH.addEventListener("mouseout", (e) => {
@@ -1224,8 +1196,7 @@ fab3PeiHumAbs.addEventListener("mouseover", (e) => {
     fab3PeiHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3PeiHumAbs.addEventListener("mouseout", (e) => {
@@ -1239,8 +1210,7 @@ fab3ClimaManT.addEventListener("mouseover", (e) => {
     fab3ClimaManT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaManT.addEventListener("mouseout", (e) => {
@@ -1255,8 +1225,7 @@ fab3ClimaManH.addEventListener("mouseover", (e) => {
     fab3ClimaManH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaManH.addEventListener("mouseout", (e) => {
@@ -1270,8 +1239,7 @@ fab3Pei65HumAbs.addEventListener("mouseover", (e) => {
     fab3Pei65HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3Pei65HumAbs.addEventListener("mouseout", (e) => {
@@ -1285,8 +1253,7 @@ fab3ClimaLabT.addEventListener("mouseover", (e) => {
     fab3ClimaLabT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaLabT.addEventListener("mouseout", (e) => {
@@ -1300,8 +1267,7 @@ fab3ClimaLabH.addEventListener("mouseover", (e) => {
     fab3ClimaLabH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaLabH.addEventListener("mouseout", (e) => {
@@ -1315,8 +1281,7 @@ fab3LabHumAbs.addEventListener("mouseover", (e) => {
     fab3C50HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3LabHumAbs.addEventListener("mouseout", (e) => {
@@ -1330,8 +1295,7 @@ fab3ClimaMechT.addEventListener("mouseover", (e) => {
     fab3ClimaMechT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaMechT.addEventListener("mouseout", (e) => {
@@ -1345,8 +1309,7 @@ fab3ClimaMechH.addEventListener("mouseover", (e) => {
     fab3ClimaMechH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaMechH.addEventListener("mouseout", (e) => {
@@ -1360,8 +1323,7 @@ fab3MechHumAbs.addEventListener("mouseover", (e) => {
     fab3MechHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3MechHumAbs.addEventListener("mouseout", (e) => {
@@ -1374,8 +1336,7 @@ fab3FiltroPei.addEventListener("mouseover", (e)=> {
     fab3FiltroPei,
     e
   );
-  /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3FiltroPei.addEventListener("mouseout", (e) => {
@@ -1412,8 +1373,7 @@ fab3FiltroCont.addEventListener("mouseover", (e)=> {
     fab3FiltroCont,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3FiltroCont.addEventListener("mouseout", (e) => {
@@ -1431,8 +1391,7 @@ fab3ClimaG30T.addEventListener("mouseover", (e) => {
     fab3ClimaG30T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaG30T.addEventListener("mouseout", (e) => {
@@ -1446,8 +1405,7 @@ fab3ClimaG30H.addEventListener("mouseover", (e) => {
     fab3ClimaG30H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaG30H.addEventListener("mouseout", (e) => {
@@ -1461,8 +1419,7 @@ fab3G30HumAbs.addEventListener("mouseover", (e) => {
     fab3G30HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3G30HumAbs.addEventListener("mouseout", (e) => {
@@ -1476,8 +1433,7 @@ fab3Clima3ZT.addEventListener("mouseover", (e) => {
     fab3Clima3ZT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3Clima3ZT.addEventListener("mouseout", (e) => {
@@ -1491,8 +1447,7 @@ fab3Clima3ZH.addEventListener("mouseover", (e) => {
     fab3Clima3ZH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3Clima3ZH.addEventListener("mouseout", (e) => {
@@ -1506,8 +1461,7 @@ fab3z3HumAbs.addEventListener("mouseover", (e) => {
     fab3z3HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3z3HumAbs.addEventListener("mouseout", (e) => {
@@ -1520,8 +1474,7 @@ fab3FiltroBob.addEventListener("mouseover", (e)=> {
     fab3FiltroBob,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3FiltroBob.addEventListener("mouseout", (e) => {
@@ -1535,8 +1488,7 @@ fab3ClimaBobT.addEventListener("mouseover", (e) => {
     fab3ClimaBobT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaBobT.addEventListener("mouseout", (e) => {
@@ -1550,8 +1502,7 @@ fab3ClimaBobH.addEventListener("mouseover", (e) => {
     fab3ClimaBobH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaBobH.addEventListener("mouseout", (e) => {
@@ -1565,8 +1516,7 @@ fab3bobHumAbs.addEventListener("mouseover", (e) => {
     fab3bobHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3bobHumAbs.addEventListener("mouseout", (e) => {
@@ -1580,8 +1530,7 @@ fab3ClimaTejT.addEventListener("mouseover", (e) => {
     fab3ClimaTejT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaTejT.addEventListener("mouseout", (e) => {
@@ -1610,8 +1559,7 @@ fab3tejHumAbs.addEventListener("mouseover", (e) => {
     fab3tejHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3tejHumAbs.addEventListener("mouseout", (e) => {
@@ -1625,8 +1573,7 @@ fab3FiltroG33.addEventListener("mouseover", (e)=> {
     fab3FiltroG33,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3FiltroG33.addEventListener("mouseout", (e) => {
@@ -1640,8 +1587,7 @@ fab3ClimaG33T.addEventListener("mouseover", (e) => {
     fab3ClimaG33T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaG33T.addEventListener("mouseout", (e) => {
@@ -1655,8 +1601,7 @@ fab3ClimaG33H.addEventListener("mouseover", (e) => {
     fab3ClimaG33H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3ClimaG33H.addEventListener("mouseout", (e) => {
@@ -1670,8 +1615,7 @@ fab3G33HumAbs.addEventListener("mouseover", (e) => {
     fab3G33HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab3G33HumAbs.addEventListener("mouseout", (e) => {
@@ -1700,8 +1644,7 @@ fab9FiltroPrep.addEventListener("mouseover", (e)=> {
     fab9FiltroPrep,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9FiltroPrep.addEventListener("mouseout", (e) => {
@@ -1715,8 +1658,7 @@ fab9ClimaPrepT.addEventListener("mouseover", (e) => {
     fab9ClimaPrepT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaPrepT.addEventListener("mouseout", (e) => {
@@ -1730,8 +1672,7 @@ fab9ClimaPrepH.addEventListener("mouseover", (e) => {
     fab9ClimaPrepH,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaPrepH.addEventListener("mouseout", (e) => {
@@ -1758,8 +1699,7 @@ fab9FiltroCardaB.addEventListener("mouseover", (e)=> {
     fab9FiltroCardaB,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9FiltroCardaB.addEventListener("mouseout", (e) => {
@@ -1788,8 +1728,7 @@ fab9ClimaCarda1H.addEventListener("mouseover", (e) => {
     fab9ClimaCarda1H,
     e
   );
-   /* console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaCarda1H.addEventListener("mouseout", (e) => {
@@ -1803,8 +1742,7 @@ fab9car1HumAbs.addEventListener("mouseover", (e) => {
     fab9car1HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9car1HumAbs.addEventListener("mouseout", (e) => {
@@ -1818,8 +1756,7 @@ fab9ClimaCarda2T.addEventListener("mouseover", (e) => {
     fab9ClimaCarda2T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaCarda2T.addEventListener("mouseout", (e) => {
@@ -1833,8 +1770,7 @@ fab9ClimaCarda2H.addEventListener("mouseover", (e) => {
     fab9ClimaCarda2H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaCarda2H.addEventListener("mouseout", (e) => {
@@ -1847,8 +1783,7 @@ fab9FiltroOE.addEventListener("mouseover", (e)=> {
     fab9FiltroOE,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9FiltroOE.addEventListener("mouseout", (e) => {
@@ -1862,8 +1797,7 @@ fab9ClimaOET.addEventListener("mouseover", (e) => {
     fab9ClimaOET,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaOET.addEventListener("mouseout", (e) => {
@@ -1877,8 +1811,7 @@ fab9ClimaOEH.addEventListener("mouseover", (e) => {
     fab9ClimaOEH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaOEH.addEventListener("mouseout", (e) => {
@@ -1892,8 +1825,7 @@ fab9OEHumAbs.addEventListener("mouseover", (e) => {
     fab9OEHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9OEHumAbs.addEventListener("mouseout", (e) => {
@@ -1907,8 +1839,7 @@ fab9ClimaEmpT.addEventListener("mouseover", (e) => {
     fab9ClimaEmpT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaEmpT.addEventListener("mouseout", (e) => {
@@ -1922,8 +1853,7 @@ fab9ClimaEmpH.addEventListener("mouseover", (e) => {
     fab9ClimaEmpH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaEmpH.addEventListener("mouseout", (e) => {
@@ -1937,8 +1867,7 @@ fab9empHumAbs.addEventListener("mouseover", (e) => {
     fab9empHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9empHumAbs.addEventListener("mouseout", (e) => {
@@ -1953,8 +1882,7 @@ fab1FiltroCard.addEventListener("mouseover", (e)=> {
     fab1FiltroCard,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1FiltroCard.addEventListener("mouseout", (e) => {
@@ -1967,8 +1895,7 @@ fab1FiltroPrep.addEventListener("mouseover", (e)=> {
     fab1FiltroPrep,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1FiltroPrep.addEventListener("mouseout", (e) => {
@@ -1982,8 +1909,7 @@ fab1ClimaPeiT.addEventListener("mouseover", (e) => {
     fab1ClimaPeiT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaPeiT.addEventListener("mouseout", (e) => {
@@ -1997,8 +1923,7 @@ fab1ClimaPeiH.addEventListener("mouseover", (e) => {
     fab1ClimaPeiH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaPeiH.addEventListener("mouseout", (e) => {
@@ -2012,8 +1937,7 @@ fab1peiHumAbs.addEventListener("mouseover", (e) => {
     fab1peiHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1peiHumAbs.addEventListener("mouseout", (e) => {
@@ -2027,8 +1951,7 @@ fab1ClimaManT.addEventListener("mouseover", (e) => {
     fab1ClimaManT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaManT.addEventListener("mouseout", (e) => {
@@ -2042,8 +1965,7 @@ fab1ClimaManH.addEventListener("mouseover", (e) => {
     fab1ClimaManH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaManH.addEventListener("mouseout", (e) => {
@@ -2056,8 +1978,7 @@ fab1FiltroCont.addEventListener("mouseover", (e)=> {
     fab1FiltroCont,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1FiltroCont.addEventListener("mouseout", (e) => {
@@ -2070,8 +1991,7 @@ fab1FiltroBob.addEventListener("mouseover", (e)=> {
     fab1FiltroBob,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1FiltroBob.addEventListener("mouseout", (e) => {
@@ -2085,8 +2005,7 @@ fab1ClimaCont1T.addEventListener("mouseover", (e) => {
     fab1ClimaCont1T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaCont1T.addEventListener("mouseout", (e) => {
@@ -2100,8 +2019,7 @@ fab1ClimaCont1H.addEventListener("mouseover", (e) => {
     fab1ClimaCont1H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaCont1H.addEventListener("mouseout", (e) => {
@@ -2115,8 +2033,7 @@ fab1ClimaCont2T.addEventListener("mouseover", (e) => {
     fab1ClimaCont2T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaCont2T.addEventListener("mouseout", (e) => {
@@ -2130,8 +2047,7 @@ fab1ClimaCont2H.addEventListener("mouseover", (e) => {
     fab1ClimaCont2H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaCont2H.addEventListener("mouseout", (e) => {
@@ -2145,8 +2061,7 @@ fab1cont2HumAbs.addEventListener("mouseover", (e) => {
     fab1cont2HumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1cont2HumAbs.addEventListener("mouseout", (e) => {
@@ -2161,8 +2076,7 @@ fab1ClimaVortex1T.addEventListener("mouseover", (e) => {
     fab1ClimaVortex1T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex1T.addEventListener("mouseout", (e) => {
@@ -2176,8 +2090,7 @@ fab1ClimaVortex1H.addEventListener("mouseover", (e) => {
     fab1ClimaVortex1H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex1H.addEventListener("mouseout", (e) => {
@@ -2191,8 +2104,7 @@ fab1ClimaVortex2T.addEventListener("mouseover", (e) => {
     fab1ClimaVortex2T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex2T.addEventListener("mouseout", (e) => {
@@ -2206,8 +2118,7 @@ fab1ClimaVortex2H.addEventListener("mouseover", (e) => {
     fab1ClimaVortex2H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex2H.addEventListener("mouseout", (e) => {
@@ -2221,8 +2132,7 @@ fab1ClimaVortex3T.addEventListener("mouseover", (e) => {
     fab1ClimaVortex3T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex3T.addEventListener("mouseout", (e) => {
@@ -2236,8 +2146,7 @@ fab1ClimaVortex3H.addEventListener("mouseover", (e) => {
     fab1ClimaVortex3H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex3H.addEventListener("mouseout", (e) => {
@@ -2251,8 +2160,7 @@ fab1ClimaVortex4T.addEventListener("mouseover", (e) => {
     fab1ClimaVortex4T,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex4T.addEventListener("mouseout", (e) => {
@@ -2266,8 +2174,7 @@ fab1ClimaVortex4H.addEventListener("mouseover", (e) => {
     fab1ClimaVortex4H,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaVortex4H.addEventListener("mouseout", (e) => {
@@ -2320,8 +2227,7 @@ fab1colHumAbs.addEventListener("mouseover", (e) => {
     fab1colHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1colHumAbs.addEventListener("mouseout", (e) => {
@@ -2335,8 +2241,7 @@ fab1ClimaBobT.addEventListener("mouseover", (e) => {
     fab1ClimaBobT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaBobT.addEventListener("mouseout", (e) => {
@@ -2350,8 +2255,7 @@ fab1ClimaBobH.addEventListener("mouseover", (e) => {
     fab1ClimaBobH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaBobH.addEventListener("mouseout", (e) => {
@@ -2365,8 +2269,7 @@ fab1bobHumAbs.addEventListener("mouseover", (e) => {
     fab1bobHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1bobHumAbs.addEventListener("mouseout", (e) => {
@@ -2380,8 +2283,7 @@ fab1ClimaEmpT.addEventListener("mouseover", (e) => {
     fab1ClimaEmpT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaEmpT.addEventListener("mouseout", (e) => {
@@ -2395,8 +2297,7 @@ fab1ClimaEmpH.addEventListener("mouseover", (e) => {
     fab1ClimaEmpH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaEmpH.addEventListener("mouseout", (e) => {
@@ -2410,8 +2311,7 @@ fab1empHumAbs.addEventListener("mouseover", (e) => {
     fab1empHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1empHumAbs.addEventListener("mouseout", (e) => {
@@ -2425,8 +2325,7 @@ fab1ClimaTCardT.addEventListener("mouseover", (e) => {
     fab1ClimaTCardT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaTCardT.addEventListener("mouseout", (e) => {
@@ -2440,8 +2339,7 @@ fab1ClimaTCardH.addEventListener("mouseover", (e) => {
     fab1ClimaTCardH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1ClimaTCardH.addEventListener("mouseout", (e) => {
@@ -2454,8 +2352,7 @@ fab1FiltroBatan.addEventListener("mouseover", (e)=> {
     fab1FiltroBatan,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1FiltroBatan.addEventListener("mouseout", (e) => {
@@ -2468,27 +2365,25 @@ fab1filtroCoton.addEventListener("mouseover", (e)=> {
     fab1filtroCoton,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1filtroCoton.addEventListener("mouseout", (e) => {
   const fab1cotonFilVo = mouseOutf(e, fab1filtroCoton);
 });
 
-fab1FiltroPrensa.addEventListener("mouseover", (e) => {
+/*fab1FiltroPrensa.addEventListener("mouseover", (e) => {
   const fab1prensaFiltroV = ventanaFlotanteClima(
     `${serverNodeRed}/dataFabxprensaFiltro24hs`,
     fab1FiltroPrensa,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab1FiltroPrensa.addEventListener("mouseout", (e) => {
   const fab1prensaFiltroVo = mouseOutfCl(e, fab1FiltroPrensa);
-});
+});*/
 
 
 fab9ClimaExtT.addEventListener("mouseover", (e) => {
@@ -2498,8 +2393,7 @@ fab9ClimaExtT.addEventListener("mouseover", (e) => {
     fab9ClimaExtT,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 fab9ClimaExtT.addEventListener("mouseout", (e) => {
@@ -2559,8 +2453,7 @@ desLabFibraH.addEventListener("mouseover", (e) => {
     desLabFibraH,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 desLabFibraH.addEventListener("mouseout", (e) => {
@@ -2574,8 +2467,7 @@ desLabFibreHumAbs.addEventListener("mouseover", (e) => {
     desLabFibreHumAbs,
     e
   );
-    /*console.log(`X: ${e.clientX}`);
-    console.log(`Y: ${e.clientY}`);*/
+
 });
 
 desLabFibreHumAbs.addEventListener("mouseout", (e) => {
