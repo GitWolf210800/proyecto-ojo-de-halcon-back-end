@@ -14,6 +14,18 @@ html {
     height: 100%;
 }
 
+.table-bordered {
+    border-collapse: collapse; /* Asegura que los bordes no se dupliquen */
+    width: 100%;
+}
+
+.table-bordered th, .table-bordered td {
+    border: 1px solid #FFF; /* Estilo del borde */
+    padding: 8px; /* Espaciado interno */
+    text-align: left; /* Alineación del texto */
+}
+
+
 .eyeHawk{
     background: none;
     border: none;
@@ -124,6 +136,18 @@ h4, p {
     /* font-size: 13px; */
 }
 
+#climaGcontinuas-2EFab1 {
+    display: none;
+}
+
+#climaContinuasEFab1 {
+    display: none;
+}
+
+#climaEcontinuasFab1 {
+    display: none;
+}
+
 #ventanaClima {
     display: none;
     background-color: #626262;
@@ -140,6 +164,10 @@ h4, p {
     height: 255px;
 }
 
+#info {
+    margin-top: 0px;
+}
+
 #ventanaFlotanteInformativa{
     display: none;
     background-color: #626262;
@@ -151,7 +179,7 @@ h4, p {
     padding: 10px;
     z-index: 999;
     margin: 0 auto;
-    width: 180px;
+    width: 215px;
     height: 130px;
 }
 

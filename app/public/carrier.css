@@ -13,6 +13,32 @@ html {
     height: 100%;
 }
 
+.table-bordered {
+    border-collapse: collapse; /* Asegura que los bordes no se dupliquen */
+    width: 100%;
+}
+
+.table-bordered th, .table-bordered td {
+    border: 1px solid #FFF; /* Estilo del borde */
+    padding: 8px; /* Espaciado interno */
+    text-align: left; /* Alineación del texto */
+}
+
+#ventanaFlotanteInformativa{
+    display: none;
+    background-color: #626262;
+    color: #f0f0f0;
+    text-align: justify;
+    position: fixed;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    padding: 10px;
+    z-index: 999;
+    margin: 0 auto;
+    width: 215px;
+    height: 130px;
+}
+
 .eyeHawk{
     background: none;
     border: none;

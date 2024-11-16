@@ -144,8 +144,9 @@ function ventanaFlotanteInformativa(e, datos){
   const info = document.getElementById('info');
   info.textContent = containerText;
   info.style.color = '#fff';
-  let height = 10
+  let height = 10;
   ventanaFlotanteIn.style.height = `${height}px`;
+  ventanaFlotanteIn.style.width = `215px`;
 
   while (container.firstElementChild){
     container.removeChild(container.firstElementChild);
@@ -208,6 +209,140 @@ function ventanaFlotanteInformativa(e, datos){
 
 };
 
+function tablaToolTip(e, tabla) {
+  
+  let x = e.clientX - 55;
+  let y = e.clientY + 50 ;
+  const containerText = 'Condiciones de Marcha Carrier';
+  const container = document.getElementById('datos');
+  const info = document.getElementById('info');
+  info.textContent = containerText;
+  info.style.color = '#fff';
+  let height = 270;
+  ventanaFlotanteIn.style.height = `${height}px`;
+  console.log(ventanaFlotanteIn.style.height);
+  ventanaFlotanteIn.style.width = `380px`;
+  const params = { tabla : tabla };
+
+  while (container.firstElementChild){
+    container.removeChild(container.firstElementChild);
+  }
+
+  function createTable (datos) {
+    console.log('entro a la funcion');
+    console.log(datos);
+    
+    // Crear la tabla y sus elementos
+    const table = document.createElement('table');
+    table.classList.add('table-bordered'); // Aplicar la clase CSS para los bordes
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    // Crear la fila del encabezado
+    if (datos.length > 0) {
+      // Crear la fila del encabezado con las llaves 
+
+      const encabezado = document.createElement('tr');
+      const keys = Object.keys(datos[0]); // Obtener las llaves del primer objeto
+      keys.forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key; // Usar el nombre de la propiedad como encabezado
+        encabezado.appendChild(th);
+      });
+      thead.appendChild(encabezado);
+
+      // Crear las filas con los valores
+      datos.forEach(datos => {
+        const fila = document.createElement('tr');
+
+        // Iterar sobre cada llave y crear una celda con el valor correspondiente
+        keys.forEach(key => {
+          const celda = document.createElement('td');
+          celda.textContent = datos[key]; // Usar el valor de la propiedad
+          height = height + 15;
+          console.log(celda);
+          fila.appendChild(celda);
+        });
+
+        tbody.appendChild(fila);
+      });
+
+      // Agregar thead y tbody a la tabla
+      table.appendChild(thead);
+      table.appendChild(tbody);
+
+      // Limpiar el contenedor y agregar la tabla generada
+      container.innerHTML = '';
+      container.appendChild(table);
+    } else {
+      container.textContent = 'No hay datos para mostrar';
+    }
+    
+  }
+
+  async function fetchData() {
+    console.log('entro a la funcion');
+    try {
+      const response = await fetch(`${server}/tabla`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const datos = await response.json();
+      console.log(datos);
+      createTable(datos); // Llamar a la función para crear la tabla
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
+  };
+
+  fetchData();
+
+
+  if (isMobile()){
+    if(window.innerHeight < window.innerWidth){
+      ventanaFlotanteIn.style.border = 'none';
+      ventanaFlotanteIn.style.background = 'linear-gradient(0deg, transparent, #232638)';
+      ventanaFlotanteIn.style.position = 'fixed';
+      ventanaFlotanteIn.style.display = 'flex';
+      ventanaFlotanteIn.style.flexWrap = 'wrap';
+      ventanaFlotanteIn.style.width = '98vw';
+      ventanaFlotanteIn.style.height = '100%';
+      ventanaFlotanteIn.style.left = '0vw';
+      ventanaFlotanteIn.style.top = '0vh';
+      ventanaFlotanteIn.style.zIndex = 999;
+      container.style.position = 'absolute';
+      container.style.top = '8vh';
+      container.style.right = '.5vw';
+      container.style.width = '25vw';
+      container.style.height = '70vh';
+      ventanaFlotanteIn.style.display = "block";
+    } else {
+      ventanaFlotanteIn.style.border = 'none';
+      ventanaFlotanteIn.style.background = 'linear-gradient(180deg, transparent, #232638)';
+      ventanaFlotanteIn.style.display = 'flex';
+      ventanaFlotanteIn.style.flexWrap = 'wrap';
+      ventanaFlotanteIn.style.justifyContent = 'center';
+      ventanaFlotanteIn.style.width = '98vw';
+      ventanaFlotanteIn.style.height = '100%';
+      ventanaFlotanteIn.style.left = '0vw';
+      ventanaFlotanteIn.style.top = 0 + 'px';
+      ventanaFlotanteIn.style.zIndex = 999;
+      container.style.position = 'absolute';
+      container.style.display = 'inline';
+      container.style.top = '35vh';
+      container.style.right = '25vw';
+      container.style.left = '25vw';
+      container.style.width = '90%';
+      container.style.height = '70vh';
+      ventanaFlotanteIn.style.display = "block";
+    }
+  } else {
+    ventanaFlotanteIn.style.left = x + "px";
+    ventanaFlotanteIn.style.top = y + "px";
+    ventanaFlotanteIn.style.display = "block";
+  }
+};
+
 function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min, max) {  /// This function is for show data in clima installation and popUp windows adjusted automatically
     //let ctxCL = document.getElementById("myChartClima");
       //const instalacion = document.getElementById("instalacionclima");
@@ -246,7 +381,7 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
           const date = JSON.parse(http.responseText);
               const dataTempRealcl = date.datos[0];
               const datos = date.datos;
-              console.log('entro');
+              //console.log('entro');
               if (estandar){
                 nameInst.textContent = `${date.instalacion}, 24Hs`;
               } 
@@ -265,13 +400,10 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
               let colorG;
               let limiteColor;
               let limiteInterColor;
-              let tempMaxA = dataTempRealcl.max_Atemp;
-              let tempMinA = dataTempRealcl.min_Atemp;
-              let humMaxA = dataTempRealcl.max_Ahum;
-              let humMinA = dataTempRealcl.min_Ahum;
-
-              //console.log(datos);
-    
+              let tempMaxA = dataTempRealcl.max_A_temperatura;
+              let tempMinA = dataTempRealcl.min_A_temperatura;
+              let humMaxA = dataTempRealcl.max_A_humedad;
+              let humMinA = dataTempRealcl.min_A_humedad; 
     
               //Iterar sobre el array de datos de la base de datos
               for (let i = 0; i < datos.length; i++) {
@@ -284,26 +416,26 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
     
                   // El paquete de datos se arma en base a la solicitud del usuario. Condicion si es temperatura, humedad o humedadAbs
                   if (date.medicion === "temperatura") {
-                    limiteInf.push({ x: horaText, y: `${datos[i].min_Atemp}` });
-                    limiteInterInf.push ({ x: horaText, y: `${datos[i].minTemp}` });
+                    limiteInf.push({ x: horaText, y: `${datos[i].min_A_temperatura}` });
+                    limiteInterInf.push ({ x: horaText, y: `${datos[i].min_temperatura}` });
                     historial.push({ x: horaText, y: `${datos[i].temperatura}` });
-                    limiteInterSup.push ({ x: horaText, y: `${datos[i].maxTemp}` });
-                    limiteSup.push({ x: horaText, y: `${datos[i].max_Atemp}` });
+                    limiteInterSup.push ({ x: horaText, y: `${datos[i].max_temperatura}` });
+                    limiteSup.push({ x: horaText, y: `${datos[i].max_A_temperatura}` });
                   } 
                   else if (date.medicion === "humedad") {
-                    limiteInf.push({ x: horaText, y: `${datos[i].min_Ahum}` });
-                    limiteInterInf.push({ x: horaText, y: `${datos[i].minHum}` });
+                    limiteInf.push({ x: horaText, y: `${datos[i].min_A_humedad}` });
+                    limiteInterInf.push({ x: horaText, y: `${datos[i].min_humedad}` });
                     historial.push({ x: horaText, y: `${datos[i].humedad}` });
-                    limiteInterSup.push({ x: horaText, y: `${datos[i].maxHum}` });
-                    limiteSup.push({ x: horaText, y: `${datos[i].max_Ahum}` });
+                    limiteInterSup.push({ x: horaText, y: `${datos[i].max_humedad}` });
+                    limiteSup.push({ x: horaText, y: `${datos[i].max_A_humedad}` });
                   }
                   else if (date.medicion === "prensa_filtro") {
                     historial.push({ x: horaText, y: `${datos[i].filtro}` }); 
                   }
-                  else if (date.medicion === "humAbsoluta") {
-                    limiteInf.push({ x: horaText, y: `${datos[i].minHumAbs}` });
-                    historial.push({ x: horaText, y: `${datos[i].humedadAbs}` });
-                    limiteSup.push({ x: horaText, y: `${datos[i].maxHumAbs}` });
+                  else if (date.medicion === "humedad_absoluta") {
+                    limiteInf.push({ x: horaText, y: `${datos[i].min_humedad_absoluta}` });
+                    historial.push({ x: horaText, y: `${datos[i].humedad_absoluta}` });
+                    limiteSup.push({ x: horaText, y: `${datos[i].max_humedad_absoluta}` });
                   }
                   else if (date.medicion === 'entalpia'){
                     historial.push({ x: horaText, y: `${datos[i].entalpia}`});
@@ -318,27 +450,27 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
     
               //Validacion si el Dato es temperatura, humedad o humedadAbsoluta para armar el paquete de datos
               if (date.medicion === "temperatura") {
-                limiteSupT = `Limite Superior: ${dataTempRealcl.max_Atemp}°C`;
-                limiteInterSupT = `Limite InterSup: ${dataTempRealcl.maxTemp}°C`;
-                limtieInfT = `Limite Inferior: ${dataTempRealcl.min_Atemp}°C`;
-                limiteInterInfT = `Limite InterInf: ${dataTempRealcl.minTemp}°C`;
+                limiteSupT = `Limite Superior: ${dataTempRealcl.max_A_temperatura}°C`;
+                limiteInterSupT = `Limite InterSup: ${dataTempRealcl.max_temperatura}°C`;
+                limtieInfT = `Limite Inferior: ${dataTempRealcl.min_A_temperatura}°C`;
+                limiteInterInfT = `Limite InterInf: ${dataTempRealcl.min_temperatura}°C`;
                 colorG = "#FA7D07";
                 limiteInterColor = '#E7C101';
                 limiteColor = "#A507FA";
               } else if (date.medicion === "humedad") {
-                limiteSupT = `Limite Superior: ${dataTempRealcl.max_Ahum}%`;
-                limiteInterSupT = `Limite InterSup: ${dataTempRealcl.maxHum}%`;
-                limtieInfT = `Limite Inferior: ${dataTempRealcl.min_Ahum}%`;
-                limiteInterInfT = `Limite InterInf: ${dataTempRealcl.minHum}%`;
+                limiteSupT = `Limite Superior: ${dataTempRealcl.max_A_humedad}%`;
+                limiteInterSupT = `Limite InterSup: ${dataTempRealcl.max_humedad}%`;
+                limtieInfT = `Limite Inferior: ${dataTempRealcl.min_A_humedad}%`;
+                limiteInterInfT = `Limite InterInf: ${dataTempRealcl.min_humedad}%`;
                 colorG = "#417CDF";
                 limiteInterColor = '#E7C101';
                 limiteColor = "#20A907";
               }
               else if (date.medicion === "prensa_filtro") colorG = "#31BD00";
     
-              else if (date.medicion === "humAbsoluta") {
-                limiteSupT = `Limite Superior: ${dataTempRealcl.maxHumAbs}g/kg`;
-                limtieInfT = `Limite Inferior: ${dataTempRealcl.minHumAbs}g/kg`;
+              else if (date.medicion === "humedad_absoluta") {
+                limiteSupT = `Limite Superior: ${dataTempRealcl.max_humedad_absoluta}g/kg`;
+                limtieInfT = `Limite Inferior: ${dataTempRealcl.min_humedad_absoluta}g/kg`;
                 colorG = "#0076E5";
                 limiteColor = "#FA1300";
               }
@@ -367,6 +499,7 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
               historial.reverse();
               limiteSup.reverse();
               limiteInterSup.reverse();
+
 
               // Aqui se destruye la grafica en caso de haberse utilizado previamente
               if(window.chartCl) window.chartCl.destroy();
@@ -645,7 +778,7 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
     
     // definir la posicion de la ventana en la pantalla del usuario/cliente, en base a la posicion del eje x e y del mouse donde se
     // esta seleccionando el objeto
-    //if(isMobile()){
+
       if (e.clientY >= 45 && e.clientY < 100) {
         x = x - 300; 
         y = y + 30;
@@ -714,7 +847,6 @@ function ventanaFlotanteClima (nombre, medicion, boton, e, estandar, tabla, min,
       }
       
       else y = y - 50;
-    //}
     
     //aca se define en el CSS los px de posicion de la ventana flotante, y el modo de la ventana, en este caso 'block'
     if (isMobile()){
@@ -788,7 +920,12 @@ function ventanaFlotanteFiltro  (nombre, boton, e) {    /// This function is for
 
         if (dataTempReal){
 
-          graficoDiv.style.display = 'block';
+          if (dataTempReal[`max_filtro_ventilador`] !== null){
+            graficoDiv.style.display = 'block';
+          } 
+          else {
+            graficoDiv.style.display = 'none';
+          }
 
           for (let x in dataTempReal){
             if (dataTempReal[x] !== null && typeof dataTempReal[x] !== 'string' && !x.startsWith('lim')){
@@ -804,7 +941,7 @@ function ventanaFlotanteFiltro  (nombre, boton, e) {    /// This function is for
   
               if(!document.querySelector(`.${nombreDato}INFO`)){
                 const divInfoLim = document.createElement('h4');
-                divInfoLim.className = x;
+                divInfoLim.className = nombre;
                 divInfoLim.textContent = `${nombre} : (Limite: ${dataTempReal[x]})`;
                 container.appendChild(divInfoLim);
   
@@ -831,14 +968,24 @@ function ventanaFlotanteFiltro  (nombre, boton, e) {    /// This function is for
               }
   
               if(x.includes('filtro_ventilador')){
-                (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_${nombre}`]))
-                  ? info.style.color = alarmClima
-                  : info.style.color = textOk;
-  
-                (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_alarma${nombre}`]))
-                  ? (info.style.color = textNotOk, console.log('entro el if'))
-                  : info.style.color = textOk;
+                document.querySelector(`.${nombre}`).textContent = `Diferencial de Tela : (Limite: ${dataTempReal[`max_${nombre}`]})`;
+                
+                 if (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_alarma_${nombre}`])){
+                  info.style.color = textNotOk
+                  }   
+                else if (parseFloat(dataTempReal[nombre]) > parseInt(dataTempReal[`max_${nombre}`])){
+                      info.style.color = alarmClima
+                 }
+                 else {
+                      info.style.color = textOk;
+                 }
               }
+
+              if (dataTempReal[nombre] === null){
+                console.log('entro al if');
+                info.style.color = offline;
+              }
+
             }
 
           };
@@ -934,11 +1081,13 @@ function ventanaFlotanteFiltro  (nombre, boton, e) {    /// This function is for
   let x = e.clientX + 15; // Agregar un desplazamiento a la derecha
   let y = e.clientY;
   boton.style.fill = mouseOver;
-
-  console.log(` x : ${e.clientX}`);
-  console.log(` y : ${e.clientY}`);
   
   if (e.clientY >= 45 && e.clientY < 100) y = y + 30;
+
+  else if (e.clientY >= 100 && e.clientY < 300 && e.clientX >= 100 && e.clientX < 250) {
+    y = y - 180;
+    x = x + 50;
+  } 
   
   else if (e.clientY >= 400 && e.clientY < 600 && e.clientX >= 100 && e.clientX < 200) {
     y = y - 380;
@@ -946,7 +1095,7 @@ function ventanaFlotanteFiltro  (nombre, boton, e) {    /// This function is for
   } 
   
   else if (e.clientY >= 300 && e.clientY < 750 && e.clientX >= 500 && e.clientX < 1450) {
-    y = y - 280;
+    y = y - 350;
     x = x - 360;
   } 
   else if (e.clientY >= 200 && e.clientY < 300 && e.clientX >= 1000) {
@@ -1094,14 +1243,14 @@ function puestoClimaRef (botonTemp, botonHum, textTemp, textHum, data, instalaci
       //de existir los datos se almacenen en constantes, para ser utilizadas mas adelante
         const temp = (datos.temperatura).toFixed(0);
         const hum = (datos.humedad).toFixed(0);
-        const minATemper = datos.min_Atemp;
-        const minTemp = datos.minTemp;
-        const maxTemp = datos.maxTemp;
-        const maxATemper = datos.max_Atemp;
-        const minAHum = datos.min_Ahum;
-        const minHum = datos.minHum;
-        const maxHum = datos.maxHum;
-        const maxAHum = datos.max_Ahum;
+        const minATemper = datos.min_A_temperatura;
+        const minTemp = datos.min_temperatura;
+        const maxTemp = datos.max_temperatura;
+        const maxATemper = datos.max_A_temperatura;
+        const minAHum = datos.min_A_humedad;
+        const minHum = datos.min_humedad;
+        const maxHum = datos.max_humedad;
+        const maxAHum = datos.max_A_humedad;
         // armando la cadena de texto para mostrar en el objeto
         const infoTemp = `${temp}°C`;
         const infoHum = `${hum}% H.r`;
@@ -1209,9 +1358,9 @@ function puestoClimaRef (botonTemp, botonHum, textTemp, textHum, data, instalaci
           //se define el boton objeto de la humedadAbs
           const buttonEnt = document.getElementById(botonEnt);
           //se obtienen los datos previamente obtenido de la base de datos
-          const minEnt = datos.minHumAbs;
-          const maxEnt = datos.maxHumAbs;
-          const humAbs = (datos.humedadAbs).toFixed(0);
+          const minEnt = datos.min_humedad_absoluta;
+          const maxEnt = datos.max_humedad_absoluta;
+          const humAbs = (datos.humedad_absoluta).toFixed(0);
           // armado de string para mostrar en la web
           const infoEnt = `${humAbs} g/Kg`;
           // inserccion del string en el objeto texto del svg de la web
@@ -1283,15 +1432,31 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
         const date = JSON.parse(sector.responseText);
         const datoss = date.datos;
         const docId = 'demanda_agua_fria';
+        const condMarchCarr = 'condiciones_marcha_carrier';
+        const botonCondMarchCarr = document.getElementById(condMarchCarr);
+        const estadoCarrier = document.getElementById(`${condMarchCarr}_estado`);
         const grafico = document.getElementById(`${docId}_grafico`);
         const text = document.getElementById(`${docId}_text`);
         //console.log(date);
+
+        if(estadoCarrier){
+          const estado = date.estado;
+          if(estado === true) estadoCarrier.style.stroke = okClima;
+          else estadoCarrier.style.stroke = alertClima;
+        }
+
+        if(botonCondMarchCarr){
+          //console.log(botonCondMarchCarr);
+          botonCondMarchCarr.addEventListener('mouseover', (e) => {tablaToolTip(e, condMarchCarr)});
+          botonCondMarchCarr.addEventListener('mouseout', (e) => {mouseOutIn(e)});
+        }
 
         if(grafico){
           if(date[docId]){
             grafico.style.fill = '#000';
             text.style.fill = alarmClima;
             text.textContent = Object.keys(date[docId]).length;
+            //console.log(Object.keys(date[docId]).length);
             grafico.style.display = 'block';
             text.style.display = 'block';
             text.addEventListener('mouseover', (e) => {ventanaFlotanteInformativa(e, date[docId])});
@@ -1303,6 +1468,7 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
         }
     
         for (let i = 0; i < datoss.length; i++){
+          const demandaHome = document.getElementById(`${datoss[i].nombre}Vinf`);
           const carrierText = document.getElementById(`${datoss[i].nombre}Text`);
           const carrierButton = document.getElementById(datoss[i].nombre);
 
@@ -1324,6 +1490,23 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
             carrierButton.style.fill = alertClima;
             carrierText.style.stroke = '#000';
             carrierText.style.fill = '#FFF';
+          }
+
+          if (demandaHome){
+            demandaHome.addEventListener('mouseover', (e) => {
+              const funcion = ventanaFlotanteClima(
+                `${datoss[i].nombre}`,
+                'demanda',
+                false,
+                e,
+                true,
+                'mediciones_carrier'
+              );
+            });
+            //
+            demandaHome.addEventListener('mouseout', (e)=> {
+              const funcionOut = mouseOutfCl(e, demandaHome);
+            });
           }
 
           try{
@@ -1478,6 +1661,8 @@ async function datosCarrier(instalacion) {
       }
 
 };
+
+
 
 export {
     decodeJWT, 
