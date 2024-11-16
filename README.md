@@ -1,4 +1,4 @@
-# ojoDeHalcon - Version 2.0
+# ojoDeHalcon - Version 3.6
 
 **Ojo de Halcón** es una aplicación web full-stack desarrollada para Tipoiti S.A.T.I.C. en el Departamento de Innovación y Desarrollo. El proyecto está orientado a la visualización y monitoreo de sistemas industriales en tiempo real.
 
