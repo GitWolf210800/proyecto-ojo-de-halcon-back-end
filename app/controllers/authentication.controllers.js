@@ -31,10 +31,10 @@ async function login(req, res){
                 };
                 res.cookie("jwt",token,cookieOption);
                 if (results[0].id_priv === 0){
-                    res.send({status:"ok", message: "Super_Usuario loggeado", redirect: "/admin"});
+                    res.send({status:"ok", message: "Super_Usuario loggeado"});
                 } 
                 else if (results[0].id_priv === 1){
-                    res.send({status: 'ok', message: 'usuario admin limites loggeado', redirect: '/limites'});
+                    res.send({status: 'ok', message: 'usuario admin limites loggeado'});
                 }
             } 
             else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
@@ -117,7 +117,7 @@ async function register(req, res){
         if (error){
             console.log(error);
         } else {
-            return res.status(201).send({status:"ok", message: `Usuario ${legajo} agregado`, redirect:"/"});
+            return res.status(201).send({status:"ok", message: `Usuario ${legajo} agregado`});
         }
     });
 
