@@ -1,5 +1,6 @@
 import express from "express"; 
 import cookieParser from "cookie-parser";
+import cors from 'cors';
 //Fix para __dirname
 import path from 'path';
 import { fileURLToPath } from "url";
@@ -15,8 +16,16 @@ console.log('Servidor Corriendo en puerto', app.get('port'));
 
 //Settings
 app.use(express.static(__dirname + '/public'));
+//app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,              // Permite el uso de cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 //rutas
 app.get('/eyeHawk', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));

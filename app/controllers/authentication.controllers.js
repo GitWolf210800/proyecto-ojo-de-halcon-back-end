@@ -26,15 +26,23 @@ async function login(req, res){
                     {expiresIn: process.env.JWT_EXPIRATION}
                 );
                 const cookieOption = {
+                    httpOnly: false,          // Previene el acceso desde JavaScript
+                    //secure: false,           // Cambia a true en producción con HTTPS
+                    sameSite: 'None',        // Permite el uso de cookies en cross-origin
                     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-                    path: "/"
+                    //path: "/"
                 };
                 res.cookie("jwt",token,cookieOption);
+
+                let usuario = { name: results[0].nombre, lastName: results[0].apellido, legajo: user  };
+
                 if (results[0].id_priv === 0){
-                    res.send({status:"ok", message: "Super_Usuario loggeado"});
+                    usuario.rol = 'SUPER_USER';
+                    res.send({status:"ok", message: "Super_Usuario loggeado", usuario});
+                    console.log(cookieOption);
                 } 
                 else if (results[0].id_priv === 1){
-                    res.send({status: 'ok', message: 'usuario admin limites loggeado'});
+                    res.send({status: 'ok', message: 'usuario admin limites loggeado', redirect: '/limites'});
                 }
             } 
             else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
@@ -117,7 +125,7 @@ async function register(req, res){
         if (error){
             console.log(error);
         } else {
-            return res.status(201).send({status:"ok", message: `Usuario ${legajo} agregado`});
+            return res.status(201).send({status:"ok", message: `Usuario ${legajo} agregado`, redirect:"/"});
         }
     });
 
