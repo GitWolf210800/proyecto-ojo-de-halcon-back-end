@@ -1437,7 +1437,9 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
         const estadoCarrier = document.getElementById(`${condMarchCarr}_estado`);
         const grafico = document.getElementById(`${docId}_grafico`);
         const text = document.getElementById(`${docId}_text`);
-        //console.log(date);
+        
+        console.log(date);
+        //console.log(datoss.carga_termica_total);
 
         if(estadoCarrier){
           const estado = date.estado;
@@ -1455,7 +1457,8 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
           if(date[docId]){
             grafico.style.fill = '#000';
             text.style.fill = alarmClima;
-            text.textContent = Object.keys(date[docId]).length;
+            text.textContent = `${Object.keys(date[docId]).length} -- ${date.porcentajeBombas}%`;
+            //
             //console.log(Object.keys(date[docId]).length);
             grafico.style.display = 'block';
             text.style.display = 'block';
@@ -1471,7 +1474,9 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
           const demandaHome = document.getElementById(`${datoss[i].nombre}Vinf`);
           const carrierText = document.getElementById(`${datoss[i].nombre}Text`);
           const carrierButton = document.getElementById(datoss[i].nombre);
+          const cargaTermicaText = document.getElementById('carga_termica_total');
 
+          cargaTermicaText.textContent = parseInt(datoss[i].carga_termica_total);
           carrierText.textContent = `${datoss[i].nombre}  ${Math.abs(datoss[i].demanda.toFixed(0))} %`;
 
           if(datoss[i].estado === 100) {
@@ -1490,6 +1495,23 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
             carrierButton.style.fill = alertClima;
             carrierText.style.stroke = '#000';
             carrierText.style.fill = '#FFF';
+          }
+
+          if (cargaTermicaText) {
+            cargaTermicaText.addEventListener('mouseover', (e) => {
+              const funcion = ventanaFlotanteClima (
+                `${datoss[i].nombre}`,
+                'carga_termica_total',
+                false,
+                e,
+                true,
+                'mediciones_carrier'
+              );
+            });
+
+            cargaTermicaText.addEventListener('mouseout', (e) => {
+              const funcionOut = mouseOutfCl(e, cargaTermicaText);
+            });
           }
 
           if (demandaHome){
