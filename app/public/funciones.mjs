@@ -1438,7 +1438,7 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
         const grafico = document.getElementById(`${docId}_grafico`);
         const text = document.getElementById(`${docId}_text`);
         
-        console.log(date);
+        //console.log(date);
         //console.log(datoss.carga_termica_total);
 
         if(estadoCarrier){
@@ -1457,7 +1457,7 @@ function carrier (direccion){ // here interacted with 'sala de chillers' object,
           if(date[docId]){
             grafico.style.fill = '#000';
             text.style.fill = alarmClima;
-            text.textContent = `${Object.keys(date[docId]).length} -- ${date.porcentajeBombas}%`;
+            text.textContent = `${date.porcentajeBombas}%`;
             //
             //console.log(Object.keys(date[docId]).length);
             grafico.style.display = 'block';
