@@ -32,13 +32,13 @@ async function login(req, res){
                     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
                     //path: "/"
                 };
-                res.cookie("jwt",token,cookieOption);
+                //res.cookie("jwt",token,cookieOption);-- se prueba desactivar, con el nuevo login en Vue3
 
                 let usuario = { name: results[0].nombre, lastName: results[0].apellido, legajo: user  };
 
                 if (results[0].id_priv === 0){
                     usuario.rol = 'SUPER_USER';
-                    res.send({status:"ok", message: "Super_Usuario loggeado", usuario});
+                    res.send({status:"ok", message: "Super_Usuario loggeado", usuario, cookieOption, token});
                     console.log(cookieOption);
                 } 
                 else if (results[0].id_priv === 1){
