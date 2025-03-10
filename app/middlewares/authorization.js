@@ -61,7 +61,8 @@ async function formLimFildataIn(req, res, next){
 function formLimFil(req, res, next){
     const loggeado = revisarCookie(req);
     console.log(req.body);
-    let dato = '';
+    const dataIn = req.body.instalacion;
+    /*let dato = '';
     if(loggeado.status){
         if(req.body.fabrica === 'Fábrica 1') dato = 'fab1_';
         else if (req.body.fabrica === 'Fábrica 3') dato = 'fab3_';
@@ -70,7 +71,7 @@ function formLimFil(req, res, next){
         else if (req.body.fabrica === 'Fábrica 9') dato = 'fab9_';
         else return res.status(400).send({status: 'Error', message: 'Error de datos'}, redirect('/limitesfiltros'));
         
-        const dataIn = `${dato}${req.body.button}_filtro`;
+        const dataIn = `${dato}${req.body.button}_filtro`;*/
 
         const query = `SELECT STRAIGHT_JOIN 
                         i.id_instalacion,
@@ -100,8 +101,8 @@ function formLimFil(req, res, next){
             else return res.status(400).send({status: 'Error', message: 'Error, la instalacion no existe'})
         });
         
-    }
-    else return res.redirect('/');
+    //}
+    //else return res.redirect('/');
 };
 
 
