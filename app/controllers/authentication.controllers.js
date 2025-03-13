@@ -28,11 +28,11 @@ async function login(req, res){
                 const cookieOption = {
                     httpOnly: false,          // Previene el acceso desde JavaScript
                     //secure: false,           // Cambia a true en producción con HTTPS
-                    sameSite: 'None',        // Permite el uso de cookies en cross-origin
+                    sameSite: 'Lax',        // Permite el uso de cookies en cross-origin
                     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
                     //path: "/"
                 };
-                //res.cookie("jwt",token,cookieOption);-- se prueba desactivar, con el nuevo login en Vue3
+                res.cookie("jwt",token,cookieOption);//-- se prueba desactivar, con el nuevo login en Vue3
 
                 let usuario = { name: results[0].nombre, lastName: results[0].apellido, legajo: user  };
 

@@ -7,6 +7,7 @@ dotenv.config();
 
 async function formLimFildataIn(req, res, next){
     const loggeado = revisarCookie(req);
+    console.log(loggeado);
     console.log(req.body);
     if(loggeado.status){
         const queryVer = `SELECT * FROM usuarios
@@ -15,7 +16,7 @@ async function formLimFildataIn(req, res, next){
             if (error) console.log(error);
             if(results[0].id_priv === 0 || results[0].id_priv === 1){
                 console.log('ok'); 
-            } else res.status(400).send({status: 'Error', message: 'El usuario no tiene autorizacion para la peticion!'}, res.redirect('/'));
+            } else res.status(400).send({status: 'Error', message: 'El usuario no tiene autorizacion para la peticion!'});
         });
 
         const data = req.body;
@@ -26,16 +27,18 @@ async function formLimFildataIn(req, res, next){
         for(let v in data){
             if(data[v] === null || data[v] === ''){
                 console.log('error de datos in limFiltros');
-                res.status(400).send({status: 'Error', message: 'Error de entrada de Datos'}, res.redirect('/'));
+                res.status(400).send({status: 'Error', message: 'Error de entrada de Datos'});
             }
         }
 
 
         for(let x in data){
+            if(x === 'nombre') continue;
+
             if(x !== 'id_instalacion' && x !== 'motivo'){
                 dataQuery.push(`${x} = ${data[x]}`);
             };
-            keys.push(x);
+             keys.push(x);
             if(x === 'motivo'){
                 dataInsert.push(`'${data[x]}'`);
             } else dataInsert.push(data[x]);
@@ -45,6 +48,8 @@ async function formLimFildataIn(req, res, next){
 
         const queryInsert = `INSERT INTO ultimos_cambios_filtros (fecha,${keys},id_legajo) VALUES(CURRENT_TIMESTAMP,${dataInsert},${loggeado.data.user});`;
         
+        console.log(queryInsert);
+
         connection.query(queryInsert, function(error, results, fields){
             if(error) console.log(error);
         });
@@ -53,7 +58,7 @@ async function formLimFildataIn(req, res, next){
             if(error) console.log(error);
         });
 
-        res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente', redirect :'/limitesfiltros'});
+        res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente'});
         
     }
 }
@@ -61,6 +66,7 @@ async function formLimFildataIn(req, res, next){
 function formLimFil(req, res, next){
     const loggeado = revisarCookie(req);
     console.log(req.body);
+    console.log(loggeado.status);
     const dataIn = req.body.instalacion;
     /*let dato = '';
     if(loggeado.status){
@@ -95,7 +101,7 @@ function formLimFil(req, res, next){
         connection.query(query, function(error, results, fields){
             if(error) console.log(error);
             if(Object.keys(results).length > 0){
-                console.log(results);
+                //console.log(results);
                 res.json(results);
             }
             else return res.status(400).send({status: 'Error', message: 'Error, la instalacion no existe'})
@@ -147,7 +153,7 @@ function filFabPages(req, res, next){
 };
 
 function soloAdmin(req, res, next){
-    const logueado = revisarCookie(req);
+    const logueado = revisarCookie(req.data);
     if(logueado.status){ 
         const query = `SELECT * FROM usuarios WHERE id_legajo = ${logueado.data.user}`;
         connection.query(query, function(error, results, field){
