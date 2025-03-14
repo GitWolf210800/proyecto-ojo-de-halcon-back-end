@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
 import {connection} from "../middlewares/db.js";
+import path from "path";
 
 //Settings
 dotenv.config();
@@ -50,6 +51,11 @@ async function login(req, res){
         else return res.status(400).send({status: "Error", message:"¡Error de Login!"});
     });
 
+}
+
+async function logout(req, res) {
+    res.clearCookie('jwt', {path: '/'});
+    res.status(200).json({message: 'Sesion Cerrada'});
 }
 
 async function register(req, res){
@@ -133,5 +139,6 @@ async function register(req, res){
 
 export const methods = {
     login,
+    logout,
     register
 };
