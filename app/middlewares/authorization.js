@@ -111,6 +111,34 @@ function formLimFil(req, res, next){
     //else return res.redirect('/');
 };
 
+function formCalClima(req, res, next){
+    const loggeado = revisarCookie(req);
+
+    console.log(req.body);
+    console.log(loggeado.status);
+    const dataIn = req.body.instalacion;
+
+    const query = `SELECT STRAIGTH_JOIN
+                    i.id_instalacion,
+                    i.nombre,
+                    t.fecha,
+                    t.temperatura,
+                    t.humedad
+                    FROM factor_calibracion_puestos_clima t
+                    JOIN instalaciones i
+                    ON t.id_instalacion = i.id_instalacion
+                    WHERE i.nombre = '${dataIn}';`;
+
+    connection.query(query, function(error, results, fields){
+        if (error) console.log(error);
+
+        if(Object.keys(results).length > 0){
+            res.json(results);
+        }
+        else res.status(400).send({status: 'Error', message: 'La instalación no existe!!'});
+    });
+};
+
 
 function filFabPages(req, res, next){
     const logueado = revisarCookie(req);
@@ -228,5 +256,6 @@ export const methods = {
     adminLimites,
     filFabPages,
     formLimFil,
-    formLimFildataIn
+    formLimFildataIn,
+    formCalClima
 };
