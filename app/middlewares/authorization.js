@@ -111,18 +111,44 @@ function formLimFil(req, res, next){
     //else return res.redirect('/');
 };
 
-function formCalClima(req, res, next){
+function formCalClimaTemper(req, res, next){
     const loggeado = revisarCookie(req);
 
     console.log(req.body);
     console.log(loggeado.status);
     const dataIn = req.body.instalacion;
 
-    const query = `SELECT STRAIGTH_JOIN
+    const query = `SELECT STRAIGHT_JOIN
                     i.id_instalacion,
                     i.nombre,
                     t.fecha,
-                    t.temperatura,
+                    t.temperatura
+                    FROM factor_calibracion_puestos_clima t
+                    JOIN instalaciones i
+                    ON t.id_instalacion = i.id_instalacion
+                    WHERE i.nombre = '${dataIn}';`;
+
+    connection.query(query, function(error, results, fields){
+        if (error) console.log(error);
+
+        if(Object.keys(results).length > 0){
+            res.json(results);
+        }
+        else res.status(400).send({status: 'Error', message: 'La instalación no existe!!'});
+    });
+};
+
+function formCalClimaHumedad(req, res, next){
+    const loggeado = revisarCookie(req);
+
+    console.log(req.body);
+    console.log(loggeado.status);
+    const dataIn = req.body.instalacion;
+
+    const query = `SELECT STRAIGHT_JOIN
+                    i.id_instalacion,
+                    i.nombre,
+                    t.fecha,
                     t.humedad
                     FROM factor_calibracion_puestos_clima t
                     JOIN instalaciones i
@@ -257,5 +283,6 @@ export const methods = {
     filFabPages,
     formLimFil,
     formLimFildataIn,
-    formCalClima
+    formCalClimaTemper,
+    formCalClimaHumedad
 };
