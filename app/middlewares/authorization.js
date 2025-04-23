@@ -61,7 +61,61 @@ async function formLimFildataIn(req, res, next){
         res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente'});
         
     }
-}
+};
+
+async function formCalSent (req, res, next){
+    const loggeado = revisarCookie(req);
+    console.log(loggeado);
+    console.log(req.body);
+
+    if(loggeado.status){
+        const queryVer = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
+
+        connection.query(queryVer, function(error, results, fields){
+            if(error) console.log(error);
+
+            if(results[0].id_priv === 0 || results[0].id_priv === 2 ){
+               console.log('ok'); 
+            } else res.status(400).send({status: 'Error', message: 'El usuario no tiene autorizacion para la peticion'});
+        });
+
+        const data = req.body;
+        let dataQuery = [];
+        let keys = [];
+        let dataInsert = [];
+
+        for(let v in data){
+            if(data[v] === null || data[v] === ''){
+                console.log('Error en datos en formCalSent');
+                res.status(400).send({status: 'Error', message: 'Error de entrada de Datos'});
+            }
+        };
+
+        for(let x in data){
+            if(x === 'nombre') continue;
+
+            if(x !== 'id_instalacion') dataQuery.push(`${x} = ${data[x]}`);
+
+            keys.push(x);
+
+            dataInsert.push(data[x]);
+
+            const queryUpdate = `UPDATE factor_calibracion_clima SET fecha = CURRENT_TIMESTAMP, ${dataQuery} WHERE id_instalacio = ${data.id_instalacion};`;
+
+            const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima (fecha, ${keys}, id_legajo) VALUES(CURRENT_TIMESTAMP,${dataInsert},${loggeado.data.user});`;
+
+            connection.query(queryUpdate, function(error, results, fields){
+                if(error) console.log(error);
+            });
+
+            connection.query(queryInsert, function(error, results, fields){
+                if(error) console.log(error);
+            });
+        }
+
+        res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente'});
+    }
+};
 
 function formLimFil(req, res, next){
     const loggeado = revisarCookie(req);
@@ -164,7 +218,6 @@ function formCalClimaHumedad(req, res, next){
         else res.status(400).send({status: 'Error', message: 'La instalación no existe!!'});
     });
 };
-
 
 function filFabPages(req, res, next){
     const logueado = revisarCookie(req);
@@ -284,5 +337,6 @@ export const methods = {
     formLimFil,
     formLimFildataIn,
     formCalClimaTemper,
-    formCalClimaHumedad
+    formCalClimaHumedad,
+    formCalSent
 };
