@@ -44,8 +44,8 @@ app.get('/limitesfiltros', authorization.adminLimites,(req, res)=> res.sendFile(
 app.post('/api/filfab', authorization.filFabPages);
 app.post('/api/formlimfil', authorization.formLimFil);
 app.post('/api/formlimsent', authorization.formLimFildataIn);
-app.post('/api/formCalClimaTemper', authorization.formCalClimaTemper);
-app.post('/api/formCalClimaHumedad', authorization.formCalClimaHumedad);
+app.post('/api/formCalClima', authorization.formCalClima);
+//app.post('/api/formCalClimaHumedad', authorization.formCalClimaHumedad);
 app.post('/api/formCalSent', authorization.formCalSent);
 app.post('/api/login', authentication.login);
 app.get('/api/logout', authentication.logout);

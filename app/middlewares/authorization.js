@@ -5,6 +5,15 @@ import fetch from "node-fetch";
 
 dotenv.config();
 
+function queryAsync(query) {
+    return new Promise((resolve, reject) => {
+        connection.query(query, (error, results, fields) => {
+            if (error) return reject(error);
+            resolve(results);
+        });
+    });
+}
+
 async function formLimFildataIn(req, res, next){
     const loggeado = revisarCookie(req);
     console.log(loggeado);
@@ -65,11 +74,13 @@ async function formLimFildataIn(req, res, next){
 
 async function formCalSent (req, res, next){
     const loggeado = revisarCookie(req);
+    const data = req.body;
     console.log(loggeado);
     console.log(req.body);
 
     if(loggeado.status){
         const queryVer = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
+        const querySensorData = `SELECT * FROM instalaciones WHERE id_instalacion = ${data.id_instalacion};`;
 
         connection.query(queryVer, function(error, results, fields){
             if(error) console.log(error);
@@ -79,10 +90,28 @@ async function formCalSent (req, res, next){
             } else res.status(400).send({status: 'Error', message: 'El usuario no tiene autorizacion para la peticion'});
         });
 
-        const data = req.body;
+        const datosSensor = await queryAsync(querySensorData);
+        const sensorIp = datosSensor[0].direccion_ip;
+
+        //console.log(datosSensor[0].direccion_ip);
+        
+        const fc1T = data.factor_calibracion_temperatura;
+        const fc1H = data.factor_calibracion_humedad;
+        let fc2T = data.valor_calibracionfactor_calibracion_temperatura / data.valor_sala_temperatura;
+        let fc2H = data.valor_calibracionfactor_calibracion_humedad / data.valor_sala_humedad;
+        let fcT = 1;
+        let fcH = 1;
         let dataQuery = [];
         let keys = [];
         let dataInsert = [];
+
+        if(fc2T <= 0.6 || fc2T >= 1.4) fc2T = 1;
+
+        fcT = fc1T*fc2T;
+
+        if(fc2H <= 0.6 || fc2H >= 1.4) fc2H = 1;
+
+        fcH = fc1H*fc2H;
 
         for(let v in data){
             if(data[v] === null || data[v] === ''){
@@ -94,24 +123,52 @@ async function formCalSent (req, res, next){
         for(let x in data){
             if(x === 'nombre') continue;
 
-            if(x !== 'id_instalacion') dataQuery.push(`${x} = ${data[x]}`);
+            if(x === 'fecha' || x === 'hora') continue;
+
+            if(x === 'factor_calibracion' || x.startsWith('valor')) continue;
+
+            //if(x !== 'id_instalacion' && !x.startsWith('valor') && x !== 'temperatura' && x !== 'humedad') dataQuery.push(`${x} = ${data[x]}`);
+
+            if(data['valor_calibracion_temperatura'] && data['valor_calibracion_humedad']) dataQuery.push(`temperatura = ${fcT}, humedad = ${fcH}`);
+                
+            else if (data['valor_calibracion_temperatura']) dataQuery.push(`temperatura = ${fcT}`);
+                
+            else if (data['valor_calibracion_humedad']) dataQuery.push(`humedad = ${fcH}`);
+
+
+            try {
+                const respuesta = await fetch(`http://${sensorIp}/calibrar`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify({temperatura: fcT, humedad: fcH })
+                });
+
+                const respuestaJson = await respuesta.json();
+
+            } catch (error) {
+                console.error('Error al enviar datos al ESP8266:', error.message);
+            }
 
             keys.push(x);
 
             dataInsert.push(data[x]);
-
-            const queryUpdate = `UPDATE factor_calibracion_clima SET fecha = CURRENT_TIMESTAMP, ${dataQuery} WHERE id_instalacio = ${data.id_instalacion};`;
-
-            const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima (fecha, ${keys}, id_legajo) VALUES(CURRENT_TIMESTAMP,${dataInsert},${loggeado.data.user});`;
-
-            connection.query(queryUpdate, function(error, results, fields){
-                if(error) console.log(error);
-            });
-
-            connection.query(queryInsert, function(error, results, fields){
-                if(error) console.log(error);
-            });
         }
+
+        const queryUpdate = `UPDATE factor_calibracion_puestos_clima SET fecha = CURRENT_TIMESTAMP, ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
+
+        console.log(queryUpdate);
+
+        const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima (fecha, ${keys}, id_legajo) VALUES(CURRENT_TIMESTAMP,${dataInsert},${loggeado.data.user});`;
+
+        connection.query(queryUpdate, function(error, results, fields){
+            if(error) console.log(error);
+        });
+
+        connection.query(queryInsert, function(error, results, fields){
+            if(error) console.log(error);
+        });
 
         res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente'});
     }
@@ -165,7 +222,7 @@ function formLimFil(req, res, next){
     //else return res.redirect('/');
 };
 
-function formCalClimaTemper(req, res, next){
+function formCalClima(req, res, next){
     const loggeado = revisarCookie(req);
 
     console.log(req.body);
@@ -176,7 +233,8 @@ function formCalClimaTemper(req, res, next){
                     i.id_instalacion,
                     i.nombre,
                     t.fecha,
-                    t.temperatura
+                    t.temperatura,
+                    t.humedad
                     FROM factor_calibracion_puestos_clima t
                     JOIN instalaciones i
                     ON t.id_instalacion = i.id_instalacion
@@ -192,7 +250,7 @@ function formCalClimaTemper(req, res, next){
     });
 };
 
-function formCalClimaHumedad(req, res, next){
+/*function formCalClimaHumedad(req, res, next){
     const loggeado = revisarCookie(req);
 
     console.log(req.body);
@@ -217,7 +275,7 @@ function formCalClimaHumedad(req, res, next){
         }
         else res.status(400).send({status: 'Error', message: 'La instalación no existe!!'});
     });
-};
+};*/
 
 function filFabPages(req, res, next){
     const logueado = revisarCookie(req);
@@ -336,7 +394,6 @@ export const methods = {
     filFabPages,
     formLimFil,
     formLimFildataIn,
-    formCalClimaTemper,
-    formCalClimaHumedad,
+    formCalClima,
     formCalSent
 };
