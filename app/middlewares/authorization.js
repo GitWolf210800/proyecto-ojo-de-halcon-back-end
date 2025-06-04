@@ -233,6 +233,7 @@ function formCalClima(req, res, next){
                     i.id_instalacion,
                     i.nombre,
                     t.fecha,
+                    t.frecuencia,
                     t.temperatura,
                     t.humedad
                     FROM factor_calibracion_puestos_clima t

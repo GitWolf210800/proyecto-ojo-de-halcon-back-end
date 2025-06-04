@@ -43,7 +43,9 @@ async function login(req, res){
                     console.log(cookieOption);
                 } 
                 else if (results[0].id_priv === 1){
-                    res.send({status: 'ok', message: 'usuario admin limites loggeado', redirect: '/limites'});
+                    usuario.rol = 'ADMIN_LIMITES';
+                    res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
+                    console.log(cookieOption);
                 }
             } 
             else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
