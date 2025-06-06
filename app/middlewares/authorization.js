@@ -81,6 +81,8 @@ async function formCalSent (req, res, next){
     if(loggeado.status){
         const queryVer = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
         const querySensorData = `SELECT * FROM instalaciones WHERE id_instalacion = ${data.id_instalacion};`;
+        console.log(data.motivoSelect);
+        const queryMotivo = `SELECT * FROM motivos WHERE id_motivo = ${data.motivo};`;
 
         connection.query(queryVer, function(error, results, fields){
             if(error) console.log(error);
@@ -91,27 +93,10 @@ async function formCalSent (req, res, next){
         });
 
         const datosSensor = await queryAsync(querySensorData);
+        const motivoDB = await queryAsync(queryMotivo);
+        const motivo = motivoDB[0].id_motivo;
+        console.log('motivo: ', motivoDB);
         const sensorIp = datosSensor[0].direccion_ip;
-
-        //console.log(datosSensor[0].direccion_ip);
-        
-        const fc1T = data.factor_calibracion_temperatura;
-        const fc1H = data.factor_calibracion_humedad;
-        let fc2T = data.valor_calibracionfactor_calibracion_temperatura / data.valor_sala_temperatura;
-        let fc2H = data.valor_calibracionfactor_calibracion_humedad / data.valor_sala_humedad;
-        let fcT = 1;
-        let fcH = 1;
-        let dataQuery = [];
-        let keys = [];
-        let dataInsert = [];
-
-        if(fc2T <= 0.6 || fc2T >= 1.4) fc2T = 1;
-
-        fcT = fc1T*fc2T;
-
-        if(fc2H <= 0.6 || fc2H >= 1.4) fc2H = 1;
-
-        fcH = fc1H*fc2H;
 
         for(let v in data){
             if(data[v] === null || data[v] === ''){
@@ -119,6 +104,46 @@ async function formCalSent (req, res, next){
                 res.status(400).send({status: 'Error', message: 'Error de entrada de Datos'});
             }
         };
+
+        //console.log(datosSensor[0].direccion_ip);
+        
+        const fc1T = data.factor_calibracion_temperatura;
+        const fc1H = data.factor_calibracion_humedad;
+        const temperaturaSala = data.valor_sala_temperatura;
+        const TemperaturaReal = data.valor_calibracion_temperatura;
+        const difTemperatura = Math.abs(temperaturaSala - TemperaturaReal);
+        const humedadSala = data.valor_sala_humedad;
+        const humedadReal = data.valor_calibracion_humedad;
+        const difHumedad = Math.abs(humedadSala - humedadReal);
+        let fc2T = TemperaturaReal / temperaturaSala;
+        let fc2H = humedadReal / humedadSala;
+        let fcT = 1;
+        let fcH = 1;
+        let dataQuery = [];
+        let keys = [];
+        let dataInsert = [];
+        let message = '';
+
+
+        if(fc2T <= 0.6 || fc2T >= 1.4) fc2T = 1;
+
+        if(fc2H <= 0.6 || fc2H >= 1.4) fc2H = 1;
+
+        if(difTemperatura > 0.5) {
+            fcT = fc1T*fc2T;
+            message += 'Temperatura : Calibrada \n';
+        } else {
+            fcT = fc1T;
+            message += 'Temperatura : Sin Acción \n';
+        }
+
+        if(difHumedad > 3) {
+            fcH = fc1H*fc2H;
+            message += 'Humedad : Calibrada';
+        } else {
+            fcH = fc1H;
+            message += 'Humedad : Sin Acción';
+        }
 
         for(let x in data){
             if(x === 'nombre') continue;
@@ -135,32 +160,60 @@ async function formCalSent (req, res, next){
                 
             else if (data['valor_calibracion_humedad']) dataQuery.push(`humedad = ${fcH}`);
 
-
-            try {
-                const respuesta = await fetch(`http://${sensorIp}/calibrar`,{
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':'application/json'
-                    },
-                    body: JSON.stringify({temperatura: fcT, humedad: fcH })
-                });
-
-                const respuestaJson = await respuesta.json();
-
-            } catch (error) {
-                console.error('Error al enviar datos al ESP8266:', error.message);
-            }
-
             keys.push(x);
 
             dataInsert.push(data[x]);
+        }
+
+        try {
+            const respuesta = await fetch(`http://${sensorIp}/calibrar`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({temperatura: fcT, humedad: fcH })
+            });
+
+            const respuestaJson = await respuesta.json();
+
+        } catch (error) {
+            console.error('Error al enviar datos al ESP8266:', error.message);
         }
 
         const queryUpdate = `UPDATE factor_calibracion_puestos_clima SET fecha = CURRENT_TIMESTAMP, ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
 
         console.log(queryUpdate);
 
-        const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima (fecha, ${keys}, id_legajo) VALUES(CURRENT_TIMESTAMP,${dataInsert},${loggeado.data.user});`;
+        const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima
+                                 (
+                                id_instalacion,
+                                id_instalacion_fisica,
+                                fecha, 
+                                 temperatura, 
+                                 temperatura_sala, 
+                                 temperatura_real,
+                                 humedad, 
+                                 humedad_sala, 
+                                 humedad_real,
+                                 motivo,  
+                                 accion, 
+                                 id_legajo
+                                 ) 
+                                 VALUES
+                                 (
+                                 ${data.id_instalacion},
+                                 ${datosSensor[0].id_instalacion_fisica},
+                                 CURRENT_TIMESTAMP, 
+                                 ${fcT}, 
+                                 ${temperaturaSala},
+                                 ${TemperaturaReal},
+                                 ${fcH},
+                                 ${humedadSala},
+                                 ${humedadReal},
+                                 ${motivo},
+                                 '${message}', 
+                                 ${loggeado.data.user}
+                                 );`;
 
         connection.query(queryUpdate, function(error, results, fields){
             if(error) console.log(error);
@@ -170,7 +223,7 @@ async function formCalSent (req, res, next){
             if(error) console.log(error);
         });
 
-        res.status(200).send({status: 'ok', message: 'Cambios efectuados correctamente'});
+        res.status(200).send({status: 'ok', message});
     }
 };
 
@@ -231,6 +284,7 @@ function formCalClima(req, res, next){
 
     const query = `SELECT STRAIGHT_JOIN
                     i.id_instalacion,
+                    i.id_fabrica,
                     i.nombre,
                     t.fecha,
                     t.frecuencia,
