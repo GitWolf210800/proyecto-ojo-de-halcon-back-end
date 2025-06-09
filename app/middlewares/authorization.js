@@ -2,6 +2,8 @@ import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
 import { connection } from "./db.js";
 import fetch from "node-fetch";
+import { obtenerFechaFormateada } from "./funciones.mjs";
+
 
 dotenv.config();
 
@@ -180,15 +182,23 @@ async function formCalSent (req, res, next){
             console.error('Error al enviar datos al ESP8266:', error.message);
         }
 
-        const queryUpdate = `UPDATE factor_calibracion_puestos_clima SET fecha = CURRENT_TIMESTAMP, ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
+        const frecuencia = data.frecuencia;
+        const fechaActual = new Date(); //Obteniendo fecha actual
+        const proximo = new Date(fechaActual);
+        proximo.setDate(fechaActual.getDate() + frecuencia);
+        const proximaFecha = obtenerFechaFormateada(proximo);
 
-        console.log(queryUpdate);
+        const queryUpdate = `UPDATE factor_calibracion_puestos_clima SET fecha = CURRENT_TIMESTAMP, proxima_fecha = ${proximaFecha}, ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
+
+        //
+        //console.log(queryUpdate);
 
         const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima
                                  (
                                 id_instalacion,
                                 id_instalacion_fisica,
-                                fecha, 
+                                fecha,
+                                proxima_fecha, 
                                  temperatura, 
                                  temperatura_sala, 
                                  temperatura_real,
@@ -203,7 +213,8 @@ async function formCalSent (req, res, next){
                                  (
                                  ${data.id_instalacion},
                                  ${datosSensor[0].id_instalacion_fisica},
-                                 CURRENT_TIMESTAMP, 
+                                 CURRENT_TIMESTAMP,
+                                 ${proximaFecha}, 
                                  ${fcT}, 
                                  ${temperaturaSala},
                                  ${TemperaturaReal},
