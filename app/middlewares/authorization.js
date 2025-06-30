@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connection } from "./db.js";
 import fetch from "node-fetch";
 import { obtenerFechaFormateada } from "./funciones.mjs";
+import { server } from "./variables.mjs";
 
 
 dotenv.config();
@@ -82,8 +83,14 @@ async function formCalSent (req, res, next){
 
     if(loggeado.status){
         const queryVer = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
-        const querySensorData = `SELECT * FROM instalaciones WHERE id_instalacion = ${data.id_instalacion};`;
-        console.log(data.motivoSelect);
+        const querySensorData = `SELECT STRAIGHT_JOIN 
+                                    * 
+                                FROM instalaciones i 
+                                JOIN factor_calibracion_puestos_clima f 
+                                ON i.id_instalacion = f.id_instalacion 
+                                WHERE i.id_instalacion = ${data.id_instalacion};`;
+
+        //console.log(data.motivoSelect);
         const queryMotivo = `SELECT * FROM motivos WHERE id_motivo = ${data.motivo};`;
 
         connection.query(queryVer, function(error, results, fields){
@@ -97,8 +104,15 @@ async function formCalSent (req, res, next){
         const datosSensor = await queryAsync(querySensorData);
         const motivoDB = await queryAsync(queryMotivo);
         const motivo = motivoDB[0].id_motivo;
-        console.log('motivo: ', motivoDB);
+        console.log('datos_sensor: ', datosSensor);
         const sensorIp = datosSensor[0].direccion_ip;
+        let intentos = datosSensor[0].intentos;
+        const estado = datosSensor[0].estado;
+
+        if(estado === 'MANTENIMIENTO') {
+            res.status(400).send({status: 'Error', message: 'En espera de mantenimiento'});
+            return;
+        }
 
         for(let v in data){
             if(data[v] === null || data[v] === ''){
@@ -125,26 +139,107 @@ async function formCalSent (req, res, next){
         let keys = [];
         let dataInsert = [];
         let message = '';
+        let estadoTemperatura = '';
+        let estadoHumedad = '';
+        let dataNodeRed = [];
+
+        const fechaCalibracion = datosSensor[0].proxima_fecha;
+
+        if(fechaCalibracion) {
+            const fechaDB = new Date(fechaCalibracion);
+            const now = new Date();
+
+            if(!isNaN(fechaDB)){
+                if(fechaDB < now) {
+                    intentos = 0;
+                    console.log('verificacion de fecha correcta...');
+                } else {
+                    intentos += 1;
+                    console.log('no transcurrio la fecha prevista...');
+                }
+            }
+        }
 
 
-        if(fc2T <= 0.6 || fc2T >= 1.4) fc2T = 1;
+        if(intentos > 3) {
+            message = 'Error: Cantidad de intentos superada! \n';
+            const mensaje = `Verificar Sensor: ${datosSensor[0].nombre} \nIntentos de Calibracion, Superados!!!`;
+            const queryUpdate = `UPDATE instalaciones
+                                    SET
+                                estado = 'MANTENIMIENTO';`;
 
-        if(fc2H <= 0.6 || fc2H >= 1.4) fc2H = 1;
+            const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima
+                                    (
+                                        id_instalacion,
+                                        id_instalacion_fisica,
+                                        fecha,
+                                        motivo,
+                                        accion,
+                                        id_legajo
+                                    )
+                                VALUES
+                                    (
+                                        ${data.id_instalacion},
+                                        ${datosSensor[0].id_instalacion_fisica},
+                                        CURRENT_TIMESTAMP(),
+                                        ${motivo},
+                                        '${message}',
+                                        ${loggeado.data.user}
+                                    );`;
+
+            
+
+            connection.query(queryUpdate, function(error, results, fields){
+            if(error) console.log(error);
+            });
+
+            connection.query(queryInsert, function(error, results, fields){
+            if(error) console.log(error);
+            });
+
+            try{
+                const respuesta = await fetch(`${server}/informesClima`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    },
+                    body: JSON.stringify({instalacion: datosSensor[0].nombre, mensaje, estado: 'MANTENIMIENTO'})
+                });
+                const respuestaJson = await respuesta.json();
+                if(respuestaJson.message){
+                    console.log(respuestaJson.message);
+                }
+                } catch (error) {
+                    console.error('Error al enviar datos a Node-Red', error.message);
+                }
+
+            res.status(400).send({status: 'Error', message});
+
+            return;
+        }
+
+        /*if(fc2T <= 0.6 || fc2T >= 1.4) fc2T = 1;
+
+        if(fc2H <= 0.6 || fc2H >= 1.4) fc2H = 1;*/
 
         if(difTemperatura > 0.5) {
             fcT = fc1T*fc2T;
             message += 'Temperatura : Calibrada \n';
+            estadoTemperatura = 'NO OK';
         } else {
             fcT = fc1T;
             message += 'Temperatura : Sin Acción \n';
+            estadoTemperatura = 'OK';
         }
 
         if(difHumedad > 3) {
             fcH = fc1H*fc2H;
             message += 'Humedad : Calibrada';
+            estadoHumedad = 'NO OK';
         } else {
             fcH = fc1H;
             message += 'Humedad : Sin Acción';
+            estadoHumedad = 'OK'; 
         }
 
         for(let x in data){
@@ -167,29 +262,19 @@ async function formCalSent (req, res, next){
             dataInsert.push(data[x]);
         }
 
-        try {
-            const respuesta = await fetch(`http://${sensorIp}/calibrar`,{
-                method: 'POST',
-                headers: {
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify({temperatura: fcT, humedad: fcH })
-            });
-
-            const respuestaJson = await respuesta.json();
-
-        } catch (error) {
-            console.error('Error al enviar datos al ESP8266:', error.message);
-        }
-
         const frecuencia = data.frecuencia;
         const fechaActual = new Date(); //Obteniendo fecha actual
         const proximo = new Date(fechaActual);
         proximo.setDate(fechaActual.getDate() + frecuencia);
         const proximaFecha = obtenerFechaFormateada(proximo);
 
-        const queryUpdate = `UPDATE factor_calibracion_puestos_clima SET fecha = CURRENT_TIMESTAMP, proxima_fecha = ${proximaFecha}, ${dataQuery} WHERE id_instalacion = ${data.id_instalacion};`;
-
+        const queryUpdate = `UPDATE factor_calibracion_puestos_clima 
+                                SET 
+                            fecha = CURRENT_TIMESTAMP, 
+                            proxima_fecha = '${proximaFecha}', 
+                            intentos = ${intentos}, 
+                            ${dataQuery} 
+                            WHERE id_instalacion = ${data.id_instalacion};`;
         //
         //console.log(queryUpdate);
 
@@ -214,7 +299,7 @@ async function formCalSent (req, res, next){
                                  ${data.id_instalacion},
                                  ${datosSensor[0].id_instalacion_fisica},
                                  CURRENT_TIMESTAMP,
-                                 ${proximaFecha}, 
+                                 '${proximaFecha}', 
                                  ${fcT}, 
                                  ${temperaturaSala},
                                  ${TemperaturaReal},
@@ -226,6 +311,31 @@ async function formCalSent (req, res, next){
                                  ${loggeado.data.user}
                                  );`;
 
+        dataNodeRed = [
+            `${fechaActual.getDate()}-${fechaActual.getMonth()}-${fechaActual.getFullYear()}`,
+            loggeado.data.user,
+            `${data.id_fabrica}`,
+            `${datosSensor[0].info_extra}`,
+            `${motivoDB[0].motivo}`,
+            TemperaturaReal,
+            humedadReal,
+            temperaturaSala,
+            humedadSala,
+            fcT,
+            fcH,
+            estadoTemperatura,
+            estadoHumedad,
+            message,
+            proximaFecha,
+            `${datosSensor[0].direccion_ip}`,
+            '=SI(INDIRECTO("S"&FILA())=1,SI(INDIRECTO("O"&FILA())<=HOY(),HOY()-INDIRECTO("O"&FILA()),""),"")',
+            '=HOY()-INDIRECT(\"A\"&ROW())',
+            `=CONTAR.SI(INDIRECTO("C"&FILA()&":C"),INDIRECTO("C"&FILA()))`,
+            '=NOW()',
+            `${datosSensor[0].estado === 'ACTIVO' ? 'SI' : 'NO'}`
+        ];
+
+
         connection.query(queryUpdate, function(error, results, fields){
             if(error) console.log(error);
         });
@@ -233,6 +343,37 @@ async function formCalSent (req, res, next){
         connection.query(queryInsert, function(error, results, fields){
             if(error) console.log(error);
         });
+
+        try {
+            const respuesta = await fetch(`http://${sensorIp}/calibrar`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({temperatura: fcT, humedad: fcH })
+            });
+
+            const respuestaJson = await respuesta.json();
+
+        } catch (error) {
+            console.error('Error al enviar datos al ESP8266:', error.message);
+        }
+
+        try{
+            const respuesta = await fetch(`${server}/calibracionClima`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify(dataNodeRed)
+            });
+            const respuestaJson = await respuesta.json();
+            if(respuestaJson.message){
+                console.log(respuestaJson.message);
+            }
+        } catch (error) {
+            console.error('Error al enviar datos a Node-Red', error.message);
+        }
 
         res.status(200).send({status: 'ok', message});
     }
@@ -310,6 +451,7 @@ function formCalClima(req, res, next){
         if (error) console.log(error);
 
         if(Object.keys(results).length > 0){
+            //console.log(results);
             res.json(results);
         }
         else res.status(400).send({status: 'Error', message: 'La instalación no existe!!'});

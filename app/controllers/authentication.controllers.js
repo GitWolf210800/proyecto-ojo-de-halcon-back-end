@@ -47,6 +47,11 @@ async function login(req, res){
                     res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
                     console.log(cookieOption);
                 }
+                else if (results[0].id_priv === 2){
+                    usuario.rol = 'CALIBRACION_CLIMA';
+                    res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
+                    console.log(cookieOption);
+                }
             } 
             else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
         } 
@@ -77,6 +82,7 @@ async function register(req, res){
     if (!clavex) clavex = 'NULL';
     else if (clavex === 'SUPER_USER') clavex = 0;
     else if (clavex === 'ADMIN_LIMITES') clavex = 1;
+    else if (clavex === 'CALIBRACION_CLIMA') clavex = 2;
 
     if (!name || !lastName || !legajo || !puesto || !passUser || !legajoPat || !passUserPat){
         return res.status(400).send({status: "Error", message: "Los campos obligatorios estan incompletos"});

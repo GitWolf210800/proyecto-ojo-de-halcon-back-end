@@ -20,8 +20,18 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(cookieParser());
 
+const allowedOrigins = ['http://192.168.3.122:3000', 'http://localhost:3000', 'http://192.168.3.122:4000', 'http://localhost:4000'];
+
 app.use(cors({
-    origin: 'http://192.168.3.122:3000',
+    origin: function (origin, callback) {
+        // Permitir peticiones sin origen (por ejemplo, desde Postman)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('No permitido por CORS'));
+        }
+    },
     credentials: true,              // Permite el uso de cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
