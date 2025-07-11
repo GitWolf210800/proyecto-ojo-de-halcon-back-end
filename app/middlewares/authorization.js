@@ -139,6 +139,7 @@ async function formCalSent (req, res, next){
         let keys = [];
         let dataInsert = [];
         let message = '';
+        let accion = '';
         let estadoTemperatura = '';
         let estadoHumedad = '';
         let dataNodeRed = [];
@@ -161,12 +162,15 @@ async function formCalSent (req, res, next){
         }
 
 
-        if(intentos > 3) {
+        if(intentos > 2) {
+            console.log('entro al if intentos', intentos);
             message = 'Error: Cantidad de intentos superada! \n';
+            accion = 'SE INFORMA A MT IMPOSIBILIDAD DE CALIBRACIÓN';
             const mensaje = `Verificar Sensor: ${datosSensor[0].nombre} \nIntentos de Calibracion, Superados!!!`;
             const queryUpdate = `UPDATE instalaciones
                                     SET
-                                estado = 'MANTENIMIENTO';`;
+                                estado = 'MANTENIMIENTO'
+                                WHERE id_instalacion = ${datosSensor[0].id_instalacion};`;
 
             const queryInsert = `INSERT INTO historial_factor_calibracion_puestos_clima
                                     (
@@ -198,7 +202,8 @@ async function formCalSent (req, res, next){
             });
 
             try{
-                const respuesta = await fetch(`${server}/informesClima`,{
+                console.log({instalacion: datosSensor[0].nombre, mensaje, estado: 'MANTENIMIENTO'});
+                const respuesta = await fetch(`http://192.168.3.200:1880/informesClima`,{
                     method: 'POST',
                     headers: {
                         'Content-Type' : 'application/json'
@@ -225,20 +230,24 @@ async function formCalSent (req, res, next){
         if(difTemperatura > 0.5) {
             fcT = fc1T*fc2T;
             message += 'Temperatura : Calibrada \n';
+            accion = 'SE CORRIGEN TEMP Y HR%';
             estadoTemperatura = 'NO OK';
         } else {
             fcT = fc1T;
             message += 'Temperatura : Sin Acción \n';
+            accion = 'SIN ACCIÓN';
             estadoTemperatura = 'OK';
         }
 
         if(difHumedad > 3) {
             fcH = fc1H*fc2H;
             message += 'Humedad : Calibrada';
+            accion = 'SE CORRIGEN TEMP Y HR%';
             estadoHumedad = 'NO OK';
         } else {
             fcH = fc1H;
             message += 'Humedad : Sin Acción';
+            accion = 'SIN ACCIÓN';
             estadoHumedad = 'OK'; 
         }
 
@@ -312,7 +321,7 @@ async function formCalSent (req, res, next){
                                  );`;
 
         dataNodeRed = [
-            `${fechaActual.getDate()}-${fechaActual.getMonth()}-${fechaActual.getFullYear()}`,
+            `${fechaActual.getDate()}/${fechaActual.getMonth()}/${fechaActual.getFullYear()}`,
             loggeado.data.user,
             `${data.id_fabrica}`,
             `${datosSensor[0].info_extra}`,
@@ -325,7 +334,7 @@ async function formCalSent (req, res, next){
             fcH,
             estadoTemperatura,
             estadoHumedad,
-            message,
+            accion,
             proximaFecha,
             `${datosSensor[0].direccion_ip}`,
             '=SI(INDIRECTO("S"&FILA())=1,SI(INDIRECTO("O"&FILA())<=HOY(),HOY()-INDIRECTO("O"&FILA()),""),"")',
