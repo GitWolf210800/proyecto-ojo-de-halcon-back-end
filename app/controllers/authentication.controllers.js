@@ -35,7 +35,7 @@ async function login(req, res){
                 };
                 res.cookie("jwt",token,cookieOption);//-- se prueba desactivar, con el nuevo login en Vue3
 
-                let usuario = { name: results[0].nombre, lastName: results[0].apellido, legajo: user  };
+                let usuario = { name: results[0].nombre, lastName: results[0].apellido, legajo: user, sexo: results[0].sexo  };
 
                 if (results[0].id_priv === 0){
                     usuario.rol = 'SUPER_USER';
