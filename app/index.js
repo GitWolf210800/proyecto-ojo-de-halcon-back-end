@@ -18,7 +18,9 @@ const allowedOrigins = [
   'http://192.168.3.200:3000',
   'http://192.168.3.122:3000',
   'http://localhost:4000',
-  'http://192.168.3.122:4000'
+  'http://192.168.3.122:4000',
+  'https://app.wolfmantech.cloud',
+  'http://localhost:5000'
 ];
 
 // Server

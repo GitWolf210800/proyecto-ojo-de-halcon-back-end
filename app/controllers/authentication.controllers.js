@@ -22,7 +22,7 @@ async function login(req, res){
         if(Object.keys(results).length > 0){
             const loginCorrecto = await bcryptjs.compare(password, results[0].passwordd);
             if(loginCorrecto){
-                const token = jsonwebtoken.sign({user: user, name: results[0].nombre, lastName: results[0].apellido}, 
+                const token = jsonwebtoken.sign({user: user, name: results[0].nombre, lastName: results[0].apellido, sexo: results[0].sexo}, 
                     process.env.JWT_SECRET, 
                     {expiresIn: process.env.JWT_EXPIRATION}
                 );
@@ -49,6 +49,12 @@ async function login(req, res){
                 }
                 else if (results[0].id_priv === 2){
                     usuario.rol = 'CALIBRACION_CLIMA';
+                    res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
+                    console.log(cookieOption);
+                }
+
+                else if (results[0].id_priv === 3){
+                    usuario.rol = 'VISITANTE';
                     res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
                     console.log(cookieOption);
                 }
@@ -83,10 +89,14 @@ async function register(req, res){
     else if (clavex === 'SUPER_USER') clavex = 0;
     else if (clavex === 'ADMIN_LIMITES') clavex = 1;
     else if (clavex === 'CALIBRACION_CLIMA') clavex = 2;
+    else if (clavex === 'VISITANTE') clavex = 3;
 
-    if (!name || !lastName || !legajo || !puesto || !passUser || !legajoPat || !passUserPat){
+    /*if (!name || !lastName || !legajo || !puesto || !passUser || !legajoPat || !passUserPat){
+        console.log('error en campo de datos', {
+            name, lastName, legajo, puesto, passUser, legajoPat, passUserPat
+        });
         return res.status(400).send({status: "Error", message: "Los campos obligatorios estan incompletos"});
-    }
+    }*/
 
 
     connection.query(`SELECT * FROM usuarios WHERE id_legajo = ${legajoPat}`, async function(error, results, fields){
