@@ -230,7 +230,7 @@ async function formCalSent (req, res, next){
         if(difTemperatura > 0.5) {
             fcT = fc1T*fc2T;
             message += 'Temperatura : Calibrada \n';
-            accion = 'SE CORRIGEN TEMP Y HR%';
+            accion = 'SE CORRIGE TEMPERATURA';
             estadoTemperatura = 'NO OK';
         } else {
             fcT = fc1T;
@@ -242,13 +242,17 @@ async function formCalSent (req, res, next){
         if(difHumedad > 3) {
             fcH = fc1H*fc2H;
             message += 'Humedad : Calibrada';
-            accion = 'SE CORRIGEN TEMP Y HR%';
+            accion = 'SE CORRIGE HUMEDAD';
             estadoHumedad = 'NO OK';
         } else {
             fcH = fc1H;
             message += 'Humedad : Sin Acción';
             accion = 'SIN ACCIÓN';
             estadoHumedad = 'OK'; 
+        }
+
+        if (difTemperatura > 0.5 && difHumedad > 3) {
+            accion = 'SE CORRIGEN TEMP Y HR%';
         }
 
         for(let x in data){
@@ -321,7 +325,7 @@ async function formCalSent (req, res, next){
                                  );`;
 
         dataNodeRed = [
-            `${fechaActual.getDate()}/${fechaActual.getMonth()}/${fechaActual.getFullYear()}`,
+            `${fechaActual.getDate()}/${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()}`,
             loggeado.data.user,
             `${data.id_fabrica}`,
             `${datosSensor[0].info_extra}`,
