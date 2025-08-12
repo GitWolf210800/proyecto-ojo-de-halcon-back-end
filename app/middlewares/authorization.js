@@ -144,6 +144,11 @@ async function formCalSent (req, res, next){
         let estadoHumedad = '';
         let dataNodeRed = [];
 
+        let estadoCalibracion = false;
+        const fechaActual = new Date(); //Obteniendo fecha actual
+        const proximo = new Date(fechaActual);
+        const frecuencia = data.frecuencia;
+
         const fechaCalibracion = datosSensor[0].proxima_fecha;
 
         if(fechaCalibracion) {
@@ -232,6 +237,7 @@ async function formCalSent (req, res, next){
             message += 'Temperatura : Calibrada \n';
             accion = 'SE CORRIGE TEMPERATURA';
             estadoTemperatura = 'NO OK';
+            estadoCalibracion = true;
         } else {
             fcT = fc1T;
             message += 'Temperatura : Sin Acción \n';
@@ -244,6 +250,7 @@ async function formCalSent (req, res, next){
             message += 'Humedad : Calibrada';
             accion = 'SE CORRIGE HUMEDAD';
             estadoHumedad = 'NO OK';
+            estadoCalibracion = true;
         } else {
             fcH = fc1H;
             message += 'Humedad : Sin Acción';
@@ -253,6 +260,12 @@ async function formCalSent (req, res, next){
 
         if (difTemperatura > 0.5 && difHumedad > 3) {
             accion = 'SE CORRIGEN TEMP Y HR%';
+        }
+
+        if(estadoCalibracion) {
+            proximo.setDate(fechaActual.getDate() + 1);
+        } else {
+            proximo.setDate(fechaActual.getDate() + frecuencia);
         }
 
         for(let x in data){
@@ -275,12 +288,7 @@ async function formCalSent (req, res, next){
             dataInsert.push(data[x]);
         }
 
-        const frecuencia = data.frecuencia;
-        const fechaActual = new Date(); //Obteniendo fecha actual
-        const proximo = new Date(fechaActual);
-        proximo.setDate(fechaActual.getDate() + frecuencia);
         const proximaFecha = obtenerFechaFormateada(proximo);
-
         const queryUpdate = `UPDATE factor_calibracion_puestos_clima 
                                 SET 
                             fecha = CURRENT_TIMESTAMP, 
@@ -344,7 +352,7 @@ async function formCalSent (req, res, next){
             '=SI(INDIRECTO("S"&FILA())=1,SI(INDIRECTO("O"&FILA())<=HOY(),HOY()-INDIRECTO("O"&FILA()),""),"")',
             '=HOY()-INDIRECT(\"A\"&ROW())',
             `=CONTAR.SI(INDIRECTO("C"&FILA()&":C"),INDIRECTO("C"&FILA()))`,
-            '=NOW()',
+            `${fechaActual.getDate()}/${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()} ${fechaActual.getHours()}:${fechaActual.getMinutes()}:${fechaActual.getSeconds()}`,
             `${datosSensor[0].estado === 'ACTIVO' ? 'SI' : 'NO'}`
         ];
 
