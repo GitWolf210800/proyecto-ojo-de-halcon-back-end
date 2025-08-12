@@ -332,6 +332,14 @@ async function formCalSent (req, res, next){
                                  ${loggeado.data.user}
                                  );`;
 
+        const dia = String(fechaActual.getDate()).padStart(2, "0");
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
+        const year = fechaActual.getFullYear();
+
+        const horas = String(fechaActual.getHours()).padStart(2, "0");
+        const minutos = String(fechaActual.getMinutes()).padStart(2, "0");
+        const segundos = String(fechaActual.getSeconds()).padStart(2, "0");
+
         dataNodeRed = [
             `${fechaActual.getDate()}/${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()}`,
             loggeado.data.user,
@@ -352,7 +360,7 @@ async function formCalSent (req, res, next){
             '=SI(INDIRECTO("S"&FILA())=1,SI(INDIRECTO("O"&FILA())<=HOY(),HOY()-INDIRECTO("O"&FILA()),""),"")',
             '=HOY()-INDIRECT(\"A\"&ROW())',
             `=CONTAR.SI(INDIRECTO("C"&FILA()&":C"),INDIRECTO("C"&FILA()))`,
-            `${fechaActual.getDate()}/${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()} ${fechaActual.getHours()}:${fechaActual.getMinutes()}:${fechaActual.getSeconds()}`,
+            `${dia}/${mes}/${year} ${horas}:${minutos}:${segundos}`,
             `${datosSensor[0].estado === 'ACTIVO' ? 'SI' : 'NO'}`
         ];
 
