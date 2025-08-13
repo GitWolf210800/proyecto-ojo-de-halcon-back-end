@@ -156,7 +156,7 @@ async function formCalSent (req, res, next){
             const now = new Date();
 
             if(!isNaN(fechaDB)){
-                if(fechaDB < now) {
+                if(fechaDB <= now) {
                     intentos = 0;
                     console.log('verificacion de fecha correcta...');
                 } else {
