@@ -140,8 +140,8 @@ async function formCalSent (req, res, next){
         let dataInsert = [];
         let message = '';
         let accion = '';
-        let estadoTemperatura = '';
-        let estadoHumedad = '';
+        let estadoTemperatura = 'OK';
+        let estadoHumedad = 'OK';
         let dataNodeRed = [];
 
         let estadoCalibracion = false;
@@ -232,35 +232,45 @@ async function formCalSent (req, res, next){
 
         if(fc2H <= 0.6 || fc2H >= 1.4) fc2H = 1;*/
 
-        if(difTemperatura > 0.5) {
+        if (difTemperatura > 0.5 && difHumedad > 3) {
             fcT = fc1T*fc2T;
             message += 'Temperatura : Calibrada \n';
+            estadoTemperatura = 'NO OK';
+
+            fcH = fc1H*fc2H;
+            message += 'Humedad : Calibrada';
+            estadoHumedad = 'NO OK';
+
+            accion = 'SE CORRIGEN TEMP Y HR%';
+            estadoCalibracion = true;
+        } else if(difTemperatura > 0.5) {
+            fcT = fc1T*fc2T;
+            message += 'Temperatura : Calibrada \n';
+            message += 'Humedad : Sin Acción';
             accion = 'SE CORRIGE TEMPERATURA';
             estadoTemperatura = 'NO OK';
             estadoCalibracion = true;
-        } else {
-            fcT = fc1T;
-            message += 'Temperatura : Sin Acción \n';
-            accion = 'SIN ACCIÓN';
-            estadoTemperatura = 'OK';
-        }
-
-        if(difHumedad > 3) {
+        } else if(difHumedad > 3) {
             fcH = fc1H*fc2H;
+            message += 'Temperatura : Sin Acción \n';
             message += 'Humedad : Calibrada';
             accion = 'SE CORRIGE HUMEDAD';
             estadoHumedad = 'NO OK';
             estadoCalibracion = true;
         } else {
+            fcT = fc1T;
+            fcH = fc1H;
+            message += 'Temperatura : Sin Acción \n';
+            message += 'Humedad : Sin Acción';
+            accion = 'SIN ACCIÓN';
+        }
+
+        /*else {
             fcH = fc1H;
             message += 'Humedad : Sin Acción';
             accion = 'SIN ACCIÓN';
             estadoHumedad = 'OK'; 
-        }
-
-        if (difTemperatura > 0.5 && difHumedad > 3) {
-            accion = 'SE CORRIGEN TEMP Y HR%';
-        }
+        }*/
 
         if(estadoCalibracion) {
             proximo.setDate(fechaActual.getDate() + 1);
