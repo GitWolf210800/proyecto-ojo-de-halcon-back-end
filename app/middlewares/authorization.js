@@ -245,6 +245,7 @@ async function formCalSent (req, res, next){
             estadoCalibracion = true;
         } else if(difTemperatura > 0.5) {
             fcT = fc1T*fc2T;
+            fcH = fc1H;
             message += 'Temperatura : Calibrada \n';
             message += 'Humedad : Sin Acción';
             accion = 'SE CORRIGE TEMPERATURA';
@@ -252,6 +253,7 @@ async function formCalSent (req, res, next){
             estadoCalibracion = true;
         } else if(difHumedad > 3) {
             fcH = fc1H*fc2H;
+            fcT = fc1T;
             message += 'Temperatura : Sin Acción \n';
             message += 'Humedad : Calibrada';
             accion = 'SE CORRIGE HUMEDAD';
