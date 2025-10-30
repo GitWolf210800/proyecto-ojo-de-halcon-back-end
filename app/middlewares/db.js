@@ -3,7 +3,8 @@ const dbConfig = {
 	host :  'localhost',
 	user : 'root',
 	password : '',
-	database : 'climaV2_0'
+	database : 'climaV2_0',
+	multipleStatements: true
 };
 
 /*export const connection = mysql.createConnection(dbConfig);  //Configuracion Antigua

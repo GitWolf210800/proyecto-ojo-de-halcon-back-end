@@ -499,12 +499,107 @@ function formCalClima(req, res, next){
     });
 };
 
-function edicionMarchaCompresores(req, res, next){
+async function edicionMarchaCompresores(req, res, next){
     const loggeado = revisarCookie(req);
     console.log(loggeado);
     console.log(req.body);
+    if(loggeado.status){
+        const query = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
+        const datos = req.body;
+        let querySent = '';
+        let sentNodeRed = {};
+        connection.query(query, function(error, results, field){
+            if (error) {
+                console.log(error);
+                return res.status(400).send({status:"Error", message: "Error de verificacion de usuario"});
+            }
+
+            if(results[0].id_priv === 0 || results[0].id_priv === 4){
+                console.log('ok');
+            } else return res.status(400).send({status: "Error", message: "El usuario no tiene permiso para realizar la accion requerida"});
+
+            for(let x in datos){
+                const nombre = x;
+                const pos = nombre.lastIndexOf("_");
+                const compresorNombre = nombre.slice(0, pos);
+                sentNodeRed[compresorNombre] = datos[x];
+
+                querySent += `UPDATE instalaciones
+                SET estado = "${datos[x]}" 
+                WHERE nombre = "${compresorNombre}"; `;
+            }
+
+            console.log(querySent);
+            connection.query(querySent, async function(error, results, field){
+                if(error){
+                    console.log(error);
+                    return res.status(400).send({status: "Error", message: "Error en la carga de base de datos"});
+                }
+
+                try {
+                    // Control de timeout (por si Node-RED no responde)
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 5000); // 5 segundos
+
+                    const nodeRed = await fetch(`${server}/updatecompresores`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type' : 'application/json'
+                        },
+                        body: JSON.stringify(sentNodeRed)
+                    });
+
+                    clearTimeout(timeout);
+
+                    // Verificamos si Node-RED respondió correctamente
+                    if (nodeRed.status !== 200) {
+                        console.error(`Error desde Node-RED: ${nodeRed.status} ${nodeRed.statusText}`);
+                        return res.status(502).send({
+                            status: "Error",
+                            message: "Node-RED respondió con un código no exitoso.",
+                            detalle: `${nodeRed.status} ${nodeRed.statusText}`
+                        });
+                    }
+
+                    // Intentamos leer el cuerpo de la respuesta
+                    let respuesta;
+                    try {
+                        respuesta = await nodeRed.json();
+                    } catch {
+                        respuesta = await nodeRed.text();
+                    }
+
+                    console.log("Respuesta Node-RED:", respuesta);
+
+                    // Todo salió bien → devolvemos éxito al cliente
+                    return res.status(200).send({
+                        status: "Ok",
+                        message: "Cambios efectuados correctamente y confirmados por Node-RED.",
+                        servicio: respuesta
+                    });
+
+                } catch (error) {
+                    if (error.name === "AbortError") {
+                        console.error("Timeout: Node-RED no respondió a tiempo.");
+                        return res.status(504).send({
+                            status: "Error",
+                            message: "El servicio de Node-RED no respondió (timeout)."
+                        });
+                    } else {
+                        console.error("Error al contactar Node-RED:", error);
+                        return res.status(500).send({
+                            status: "Error",
+                            message: "Error al intentar contactar con el servicio de Node-RED."
+                        });
+                    }
+                }
+
+            });
+
+        });
+    } else return res.status(400).send({status: "Error", message: "Ususario no Loggeado al Sistema"})
     //const dataIn = re
-}
+};
 
 /*function formCalClimaHumedad(req, res, next){
     const loggeado = revisarCookie(req);
