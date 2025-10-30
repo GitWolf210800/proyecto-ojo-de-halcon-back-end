@@ -499,6 +499,13 @@ function formCalClima(req, res, next){
     });
 };
 
+function edicionMarchaCompresores(req, res, next){
+    const loggeado = revisarCookie(req);
+    console.log(loggeado);
+    console.log(req.body);
+    //const dataIn = re
+}
+
 /*function formCalClimaHumedad(req, res, next){
     const loggeado = revisarCookie(req);
 
@@ -644,5 +651,6 @@ export const methods = {
     formLimFil,
     formLimFildataIn,
     formCalClima,
-    formCalSent
+    formCalSent,
+    edicionMarchaCompresores
 };

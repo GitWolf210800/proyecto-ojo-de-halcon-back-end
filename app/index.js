@@ -72,6 +72,7 @@ app.post('/api/filfab', authorization.filFabPages);
 app.post('/api/formlimfil', authorization.formLimFil);
 app.post('/api/formlimsent', authorization.formLimFildataIn);
 app.post('/api/formCalClima', authorization.formCalClima);
+app.post('/api/edicionMarchaCompresores', authorization.edicionMarchaCompresores);
 app.post('/api/formCalSent', authorization.formCalSent);
 app.post('/api/login', authentication.login);
 app.get('/api/logout', authentication.logout);
