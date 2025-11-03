@@ -747,5 +747,5 @@ export const methods = {
     formLimFildataIn,
     formCalClima,
     formCalSent,
-    edicionMarchaCompresores
+    edicionMarchaCompresores,
 };
