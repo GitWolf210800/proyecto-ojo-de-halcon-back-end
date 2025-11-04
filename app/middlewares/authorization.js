@@ -1,4 +1,5 @@
 import jsonwebtoken from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { connection } from "./db.js";
 import fetch from "node-fetch";
@@ -8,6 +9,40 @@ import { server } from "./variables.mjs";
 
 dotenv.config();
 
+function verifyToken(req, res) {
+    try {
+    // 🔹 Leemos el token desde la cookie
+    const token = req.cookies?.jwt;
+    //const loggeado = revisarCookie(req);
+    //console.log(loggeado.data.user, loggeado.status);
+
+    //console.log(token);
+
+    if (!token) {
+      return res.status(401).json({ valid: false, message: "No hay token presente" });
+    }
+
+    // 🔹 Verificamos el token con la misma clave secreta
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Si llegó hasta acá, el token es válido y no está vencido
+    return res.status(200).json({
+      valid: true,
+      user: decoded, // opcional: puedes mandar los datos decodificados
+    });
+
+  } catch (err) {
+    // 🔹 Si el token expiró o no es válido, capturamos el error
+    if (err.name === "TokenExpiredError") {
+      console.warn("⚠️ Token expirado");
+      return res.status(401).json({ valid: false, message: "Token expirado" });
+    }
+
+    console.error("❌ Token inválido:", err.message);
+    return res.status(401).json({ valid: false, message: "Token inválido" });
+  }
+};
+
 function queryAsync(query) {
     return new Promise((resolve, reject) => {
         connection.query(query, (error, results, fields) => {
@@ -15,7 +50,7 @@ function queryAsync(query) {
             resolve(results);
         });
     });
-}
+};
 
 async function formLimFildataIn(req, res, next){
     const loggeado = revisarCookie(req);
@@ -748,4 +783,5 @@ export const methods = {
     formCalClima,
     formCalSent,
     edicionMarchaCompresores,
+    verifyToken
 };

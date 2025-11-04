@@ -76,7 +76,7 @@ app.post('/api/edicionMarchaCompresores', authorization.edicionMarchaCompresores
 app.post('/api/formCalSent', authorization.formCalSent);
 app.post('/api/login', authentication.login);
 app.get('/api/logout', authentication.logout);
-app.get('/api/verify-token', authentication.verifyToken);
+app.get('/api/verify-token', authorization.verifyToken);
 app.post('/api/register', authentication.register);
 
 // Iniciar servidor

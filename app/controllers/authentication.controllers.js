@@ -155,22 +155,8 @@ async function register(req, res){
 
 }
 
-function verifyToken(req, res) {
-    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
-
-  if (!token) return res.status(401).json({ valid: false });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.json({ valid: true, user: decoded });
-  } catch (err) {
-    return res.status(401).json({ valid: false });
-  }
-};
-
 export const methods = {
     login,
     logout,
-    register,
-    verifyToken
+    register
 };
