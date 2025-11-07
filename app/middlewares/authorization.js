@@ -1,6 +1,6 @@
 import jsonwebtoken from "jsonwebtoken";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import dotenv, { parse } from "dotenv";
 import { connection } from "./db.js";
 import fetch from "node-fetch";
 import { obtenerFechaFormateada } from "./funciones.mjs";
@@ -542,6 +542,8 @@ async function edicionMarchaCompresores(req, res, next){
         const query = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
         const datos = req.body;
         let querySent = '';
+        let queryLog = '';
+        let cambios = '';
         let sentNodeRed = {};
         connection.query(query, function(error, results, field){
             if (error) {
@@ -562,7 +564,11 @@ async function edicionMarchaCompresores(req, res, next){
                 querySent += `UPDATE instalaciones
                 SET estado = "${datos[x]}" 
                 WHERE nombre = "${compresorNombre}"; `;
+                cambios += `${x}: ${datos[x]}, `;
             }
+
+            queryLog = `INSERT INTO historal_cambios_estado_compresores (id_legajo, fecha, cambios)
+            VALUES (${loggeado.data.user}, CURRENT_TIMESTAMP(), '${JSON.stringify(datos)}');`;
 
             console.log(querySent);
             connection.query(querySent, async function(error, results, field){
@@ -629,6 +635,12 @@ async function edicionMarchaCompresores(req, res, next){
                     }
                 }
 
+            });
+
+            connection.query(queryLog, async function(error, results, field){
+                if(error){
+                    console.log(error);
+                }
             });
 
         });
