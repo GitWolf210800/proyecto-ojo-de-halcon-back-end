@@ -26,22 +26,22 @@ const allowedOrigins = [
 // Server
 const app = express();
 app.set('port', 4000);
+app.use(cookieParser());
 
-// Middleware para log de origen (útil para debug CORS)
+// Middleware de DEBUG
 app.use((req, res, next) => {
   console.log("Request from origin:", req.headers.origin);
   next();
 });
 
-// CORS
+// 🚀 **CORS FIJO Y CORRECTO**
 app.use(cors({
-  origin: function (origin, callback) {
-    if (isDev || !origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn("CORS bloqueado para:", origin);
-      callback(new Error('No permitido por CORS'));
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (isDev || allowedOrigins.includes(origin)) {
+      return callback(null, origin);
     }
+    return callback(new Error("CORS bloqueado"), false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -50,8 +50,14 @@ app.use(cors({
 
 // Otros middlewares
 app.use(express.json());
-app.use(cookieParser());
 app.use(express.static(__dirname + '/public'));
+
+// Debug cookies
+app.use((req, res, next) => {
+  //console.log("HEADER COOKIE:", req.headers.cookie);
+  //console.log("PARSED COOKIE:", req.cookies);
+  next();
+});
 
 // Rutas
 app.get('/eyeHawk', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));

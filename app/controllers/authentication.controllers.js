@@ -8,8 +8,9 @@ import path from "path";
 dotenv.config();
 
 async function login(req, res){
-    console.log(req.body);
+    //console.log(req.body);
     const user = parseInt(req.body.user);
+    console.log(user);
     const password = req.body.password;
     if(!user || !password){
         return res.status(400).send({status:"Error", message:"Los Campos Estan Incompletos"});
@@ -21,44 +22,60 @@ async function login(req, res){
         };
         if(Object.keys(results).length > 0){
             const loginCorrecto = await bcryptjs.compare(password, results[0].passwordd);
-            if(loginCorrecto){
-                const token = jsonwebtoken.sign({user: user, name: results[0].nombre, lastName: results[0].apellido, sexo: results[0].sexo}, 
-                    process.env.JWT_SECRET, 
-                    {expiresIn: process.env.JWT_EXPIRATION}
-                );
-                const cookieOption = {
-                    httpOnly: false,          // Previene el acceso desde JavaScript
-                    //secure: false,           // Cambia a true en producción con HTTPS
-                    sameSite: 'Lax',        // Permite el uso de cookies en cross-origin
-                    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-                    //path: "/"
-                };
-                res.cookie("jwt",token,cookieOption);//-- se prueba desactivar, con el nuevo login en Vue3
+            if (loginCorrecto) {
+    const token = jsonwebtoken.sign(
+        { user: user, name: results[0].nombre, lastName: results[0].apellido, sexo: results[0].sexo},
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRATION }
+    );
 
-                let usuario = { name: results[0].nombre, lastName: results[0].apellido, legajo: user, sexo: results[0].sexo  };
+    const cookieOption = {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'Lax',
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+        path: "/"
+    };
 
-                if (results[0].id_priv === 0){
-                    usuario.rol = 'SUPER_USER';
-                    res.send({status:"ok", message: "Super_Usuario loggeado", usuario, cookieOption, token});
-                    console.log(cookieOption);
-                } 
-                else if (results[0].id_priv === 1){
-                    usuario.rol = 'ADMIN_LIMITES';
-                    res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
-                    console.log(cookieOption);
-                }
-                else if (results[0].id_priv === 2){
-                    usuario.rol = 'CALIBRACION_CLIMA';
-                    res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
-                    console.log(cookieOption);
-                }
+    //console.log(token);
 
-                else if (results[0].id_priv === 3){
-                    usuario.rol = 'VISITANTE';
-                    res.send({status:"ok", message: "Usuario loggeado", usuario, cookieOption, token});
-                    console.log(cookieOption);
-                }
-            } 
+    res.cookie("jwt", token, cookieOption);
+
+    // 🔥 UNIFICAMOS TODO
+    const usuario = {
+        name: results[0].nombre,
+        lastName: results[0].apellido,
+        legajo: user,
+        sexo: results[0].sexo,
+        rol: ""
+    };
+
+    switch (results[0].id_priv) {
+        case 0:
+            usuario.rol = "SUPER_USER";
+            break;
+        case 1:
+            usuario.rol = "ADMIN_LIMITES";
+            break;
+        case 2:
+            usuario.rol = "CALIBRACION_CLIMA";
+            break;
+        case 3:
+            usuario.rol = "VISITANTE";
+            break;
+    }
+
+    console.log(cookieOption);
+
+    return res.send({
+        status: "ok",
+        message: "Usuario loggeado",
+        usuario,
+        cookieOption,
+        token
+    });
+}
+
             else return res.status(400).send({status: "Error", message:"¡Error de Login!"});    
         } 
         else return res.status(400).send({status: "Error", message:"¡Error de Login!"});

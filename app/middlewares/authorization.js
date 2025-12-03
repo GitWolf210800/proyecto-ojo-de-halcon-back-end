@@ -9,14 +9,15 @@ import { server } from "./variables.mjs";
 
 dotenv.config();
 
-function verifyToken(req, res) {
+async function verifyToken(req, res) {
     try {
     // 🔹 Leemos el token desde la cookie
+    const loggeado = revisarCookie(req);
     const token = req.cookies?.jwt;
     //const loggeado = revisarCookie(req);
     //console.log(loggeado.data.user, loggeado.status);
-
-    //console.log(token);
+    //console.log('verifyToken');
+    //console.log(loggeado);
 
     if (!token) {
       return res.status(401).json({ valid: false, message: "No hay token presente" });
@@ -761,7 +762,7 @@ function soloPublico(req, res, next){
     else return next();
 };
 
-function revisarCookie(req){
+/*function revisarCookie(req){
     try{
         const cookieJWT = req.headers.cookie.split('; ').find(cookie => cookie.startsWith('jwt=')).slice(4);
         const decodificada = jsonwebtoken.verify(cookieJWT, process.env.JWT_SECRET);
@@ -783,7 +784,37 @@ function revisarCookie(req){
     catch {
         return false;
     }
-};
+};*/
+
+
+/*function revisarCookie(req){
+    try{
+        const token = req.cookies?.jwt;
+        if (!token) return { status: false };
+
+        const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+        return { status: true, data: decoded };
+    } catch {
+        return { status: false };
+    }
+}*/
+
+function revisarCookie(req) {
+    try {
+        const raw = req.headers.cookie;
+        if (!raw) return { status: false };
+
+        const found = raw.split("; ").find(c => c.startsWith("jwt="));
+        if (!found) return { status: false };
+
+        const token = found.substring(4);
+        const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+
+        return { status: true, data: decoded };
+    } catch {
+        return { status: false };
+    }
+}
 
 export const methods = {
     soloAdmin,
