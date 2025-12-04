@@ -115,7 +115,7 @@ async function formCalSent (req, res, next){
     const loggeado = revisarCookie(req);
     const data = req.body;
     console.log(loggeado);
-    console.log(req.body);
+    //console.log(req.body);
 
     if(loggeado.status){
         const queryVer = `SELECT * FROM usuarios WHERE id_legajo = ${loggeado.data.user};`;
@@ -504,7 +504,7 @@ function formLimFil(req, res, next){
     //else return res.redirect('/');
 };
 
-function formCalClima(req, res, next){
+async function formCalClima(req, res, next){
     const loggeado = revisarCookie(req);
 
     console.log(req.body);
