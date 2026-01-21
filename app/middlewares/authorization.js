@@ -145,10 +145,10 @@ async function formCalSent (req, res, next){
         let intentos = datosSensor[0].intentos;
         const estado = datosSensor[0].estado;
 
-        if(estado === 'MANTENIMIENTO') {
+        /*if(estado === 'MANTENIMIENTO') {
             res.status(400).send({status: 'Error', message: 'En espera de mantenimiento'});
             return;
-        }
+        }*/
 
         for(let v in data){
             if(data[v] === null || data[v] === ''){
@@ -242,7 +242,7 @@ async function formCalSent (req, res, next){
             if(error) console.log(error);
             });
 
-            try{
+            /*try{
                 console.log({instalacion: datosSensor[0].nombre, mensaje, estado: 'MANTENIMIENTO'});
                 const respuesta = await fetch(`http://192.168.3.200:1880/informesClima`,{
                     method: 'POST',
@@ -257,11 +257,11 @@ async function formCalSent (req, res, next){
                 }
                 } catch (error) {
                     console.error('Error al enviar datos a Node-Red', error.message);
-                }
+                }*/
 
-            res.status(400).send({status: 'Error', message});
+            //res.status(400).send({status: 'Error', message});
 
-            return;
+            //return;
         }
 
         /*if(fc2T <= 0.6 || fc2T >= 1.4) fc2T = 1;
