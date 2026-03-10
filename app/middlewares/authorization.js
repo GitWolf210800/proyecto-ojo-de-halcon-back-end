@@ -1,10 +1,12 @@
 import jsonwebtoken from "jsonwebtoken";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv, { parse } from "dotenv";
 import { connection } from "./db.js";
 import fetch from "node-fetch";
 import { obtenerFechaFormateada } from "./funciones.mjs";
 import { server } from "./variables.mjs";
+import { resolve } from "path";
 
 
 dotenv.config();
@@ -52,6 +54,42 @@ function queryAsync(query) {
         });
     });
 };
+
+export async function createResetToken(email){
+    return new Promise((resolve, reject)=>{
+        connection.query(
+            "SELECT id_legajo FROM usuarios WHERE email=?",
+            [email],
+            (err,results)=>{
+
+                if(err) return reject(err);
+
+                if(!results.length){
+                    return resolve(null);
+                };
+
+                const user = results[0];
+
+                const token = crypto.randomBytes(32).toString("hex");
+
+                const expires = new Date(Date.now()+3600000);
+
+                connection.query(
+                    "INSERT INTO passwords_resets (id_legajo, token, expires_at) VALUES (?,?,?)",
+                    [user.id, token, expires],
+                    (err)=>{
+
+                        if(err) return reject(err)
+
+                        resolve(token)
+
+                    }
+                )
+
+            }
+        )
+    });
+}
 
 async function formLimFildataIn(req, res, next){
     const loggeado = revisarCookie(req);

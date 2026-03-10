@@ -1,6 +1,6 @@
 const serverNodeRed = 'http://192.168.3.122:1880';
 const server = "http://192.168.3.122:1880";
-const serverApp = 'http://192.168.3.122:4000';
+const serverApp = 'http://192.168.3.122:3000';
 
 ////////////////////// colours
 const tempoColdExt = "#3275E4";

@@ -2,7 +2,10 @@ import bcryptjs from "bcryptjs";
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
 import {connection} from "../middlewares/db.js";
+import {createResetToken} from "../middlewares/authorization.js";
+import sendMail from "../utils/mailer.js";
 import path from "path";
+import { serverApp } from "../middlewares/variables.mjs";
 
 //Settings
 dotenv.config();
@@ -172,8 +175,69 @@ async function register(req, res){
 
 }
 
+async function resetPassword(req,res){
+
+    try{
+
+        const {token, password} = req.body;
+
+        if(!token || !password){
+            return res.status(400).json({
+                status:"Error",
+                message:"Datos incompletos"
+            });
+        }
+
+        connection.query(
+            "SELECT * FROM password_resets WHERE token=? AND expires_at > NOW()",
+            [token],
+            async (err,results)=>{
+
+                if(err) return res.status(500).json({error:"DB error"});
+
+                if(!results.length){
+                    return res.status(400).json({
+                        status:"Error",
+                        message:"Token inválido o expirado"
+                    });
+                }
+
+                const userId = results[0].user_id;
+
+                const salt = await bcryptjs.genSalt(5);
+                const hashPassword = await bcryptjs.hash(password,salt);
+
+                connection.query(
+                    "UPDATE usuarios SET passwordd=? WHERE id=?",
+                    [hashPassword,userId],
+                    (err)=>{
+
+                        if(err) return res.status(500).json({error:"DB error"});
+
+                        connection.query(
+                            "DELETE FROM password_resets WHERE token=?",
+                            [token]
+                        );
+
+                        res.json({
+                            status:"ok",
+                            message:"Contraseña actualizada"
+                        });
+
+                    }
+                );
+
+            }
+        );
+
+    }catch(err){
+        res.status(500).json({error:"Error servidor"});
+    }
+
+}
 export const methods = {
     login,
     logout,
-    register
+    register,
+    resetPassword
 };

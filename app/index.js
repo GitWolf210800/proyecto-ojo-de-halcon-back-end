@@ -84,6 +84,7 @@ app.post('/api/login', authentication.login);
 app.get('/api/logout', authentication.logout);
 app.get('/api/verify-token', authorization.verifyToken);
 app.post('/api/register', authentication.register);
+app.post('/forgot-password', authentication.resetPassword);
 
 // Iniciar servidor
 app.listen(app.get('port'));
