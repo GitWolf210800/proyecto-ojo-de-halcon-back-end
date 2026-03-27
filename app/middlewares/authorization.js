@@ -90,6 +90,8 @@ export async function createResetToken(email) {
 async function resetCardaLock(req, res, next) {
   const loggeado = revisarCookie(req);
   const data = req.body;
+  let maquinas = '';
+  let queryInsert = '';
   console.log(loggeado);
   console.log("datos: ", data);
 
@@ -116,9 +118,11 @@ async function resetCardaLock(req, res, next) {
 
       const datosSensor = await queryAsync(querySensorData);
       const sensorIp = datosSensor[0].direccion_ip;
+      const maquina = datos_sensor[0].id_fabrica;
       console.log(datosSensor);
       console.log('ip: ', sensorIp);
-
+      queryInsert += `INSERT INTO desbloqueo_cardas (id_legajo, fecha, maquinas)
+      VALUES(${loggeado.data.user}, CURRENT_TIMESTAMP, '${maquina}');`;
       
 
       try {
@@ -133,6 +137,14 @@ async function resetCardaLock(req, res, next) {
       } catch (error) {
         console.error("Error al enviar datos al ESP8266:", error.message);
       }
+    }
+
+    try{
+      connection.query(queryInsert, function (error, results, fields) {
+        if (error) console.log(error);
+      });
+    } catch(error){
+      console.log('error en inserccion Error:', error);
     }
 
     res.send({
