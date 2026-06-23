@@ -118,8 +118,9 @@ async function resetCardaLock(req, res, next) {
 
       const datosSensor = await queryAsync(querySensorData);
       const sensorIp = datosSensor[0].direccion_ip;
-      const maquina = datos_sensor[0].id_fabrica;
+      const maquina = datosSensor[0].id_fabrica;
       console.log(datosSensor);
+      console.log(maquina);
       console.log('ip: ', sensorIp);
       queryInsert += `INSERT INTO desbloqueo_cardas (id_legajo, fecha, maquinas)
       VALUES(${loggeado.data.user}, CURRENT_TIMESTAMP, '${maquina}');`;
