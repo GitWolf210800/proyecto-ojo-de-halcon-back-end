@@ -66,6 +66,12 @@ async function login(req, res){
         case 3:
             usuario.rol = "VISITANTE";
             break;
+        case 5:
+            usuario.rol = "POLIFUNCIONAL";
+            break;
+        case 6:
+            usuario.rol = "PLANNER";
+            break;
     }
 
     console.log(cookieOption);

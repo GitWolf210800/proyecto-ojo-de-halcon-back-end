@@ -101,7 +101,7 @@ async function resetCardaLock(req, res, next) {
     connection.query(queryVer, function (error, results, fields) {
       if (error) console.log(error);
 
-      if (results[0].id_priv === 0 || results[0].id_priv === 2 || results[0].id_priv === 5 || results[0].id_priv === 6) {
+      if (results[0].id_priv === 0 || results[0].id_priv === 5 || results[0].id_priv === 6) {
         console.log("ok");
       } else
         res
