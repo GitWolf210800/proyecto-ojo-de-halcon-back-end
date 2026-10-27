@@ -7,6 +7,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 import { methods as authentication } from "./controllers/authentication.controllers.js";
 import { methods as authorization } from "./middlewares/authorization.js";
+import jsonwebtoken from "jsonwebtoken";
+import { connection } from "./middlewares/db.js";
+import { createIndustrialAuthorization, industrialPolicies } from "./middlewares/industrial-authorization.js";
+
+const industrialBarrier = (policy) => createIndustrialAuthorization({
+  getConnection: () => connection,
+  verifyJwt: (token) => jsonwebtoken.verify(token, process.env.JWT_SECRET, {
+    algorithms: ["HS256"],
+  }),
+}, policy);
 
 // Detectar entorno
 const isDev = process.env.NODE_ENV !== 'production';
@@ -76,11 +86,11 @@ app.get('/limitesfiltros', authorization.adminLimites, (req, res)=> res.sendFile
 
 app.post('/api/filfab', authorization.filFabPages);
 app.post('/api/formlimfil', authorization.formLimFil);
-app.post('/api/formlimsent', authorization.formLimFildataIn);
+app.post('/api/formlimsent', industrialBarrier(industrialPolicies.formlimsent), authorization.formLimFildataIn);
 app.post('/api/formCalClima', authorization.formCalClima);
 app.post('/api/edicionMarchaCompresores', authorization.edicionMarchaCompresores);
-app.post('/api/edicionCardaLock', authorization.resetCardaLock);
-app.post('/api/formCalSent', authorization.formCalSent);
+app.post('/api/edicionCardaLock', industrialBarrier(industrialPolicies.edicionCardaLock), authorization.resetCardaLock);
+app.post('/api/formCalSent', industrialBarrier(industrialPolicies.formCalSent), authorization.formCalSent);
 app.post('/api/login', authentication.login);
 app.get('/api/logout', authentication.logout);
 app.get('/api/verify-token', authorization.verifyToken);
