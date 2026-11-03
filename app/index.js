@@ -10,6 +10,9 @@ import { methods as authorization } from "./middlewares/authorization.js";
 import jsonwebtoken from "jsonwebtoken";
 import { connection } from "./middlewares/db.js";
 import { createIndustrialAuthorization, industrialPolicies } from "./middlewares/industrial-authorization.js";
+import { createUnlockHistoryRepository } from './repositories/unlock-history.repository.js';
+import { createUnlockHistoryAccess } from './middlewares/unlock-history-access.js';
+import { createUnlockHistoryController } from './controllers/unlock-history.controller.js';
 
 const industrialBarrier = (policy) => createIndustrialAuthorization({
   getConnection: () => connection,
@@ -70,6 +73,12 @@ app.use((req, res, next) => {
 });
 
 // Rutas
+const unlockHistoryRepository = createUnlockHistoryRepository({ getConnection: () => connection });
+app.get('/api/historial-desbloqueo-cardas', createUnlockHistoryAccess({
+  getAccessMode: () => process.env.APP_ACCESS_MODE,
+  verifyJwt: (token, options) => jsonwebtoken.verify(token, process.env.JWT_SECRET, options),
+  repository: unlockHistoryRepository,
+}), createUnlockHistoryController({ repository: unlockHistoryRepository }));
 app.get('/eyeHawk', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
 app.get('/salaClima', (req, res)=> res.sendFile(__dirname + '/pages/sala_clima.html'));
 app.get('/', (req, res)=> res.sendFile(__dirname + '/pages/home.html'));
