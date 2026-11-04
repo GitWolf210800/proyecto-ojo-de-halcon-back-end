@@ -72,7 +72,27 @@ y omitir id_instalacion o enviarlo null. id_fabrica se normaliza con trim tanto 
 como en la petición. fabrica es solamente una etiqueta de salida: en las peticiones debe
 estar ausente o ser null. Nunca se agrupa por su nombre libre.
 Para sensor, id_fabrica debe estar ausente o ser null. id_instalacion debe ser un entero JSON.
-No se admiten propiedades adicionales, arrays, solicitud_id del cliente ni selección de tablas/columnas/listas de IDs.
+Los alcances existentes sensor y fabrica mantienen su contrato y no admiten id_instalaciones.
+El alcance seleccion permite combinar sensores de distintos sectores y fábricas. Por ejemplo,
+si 110 y 309 pertenecen a un grupo del catálogo y 205 a otro:
+
+```json
+{
+  "alcance": "seleccion",
+  "id_instalaciones": [110, 205, 309],
+  "desde": "2026-11-03 12:00:00",
+  "hasta": "2026-11-04 12:00:00"
+}
+```
+
+La lista debe contener entre 1 y 100 elementos antes de eliminar duplicados. Cada ID debe
+ser un entero JSON positivo y seguro. Se conserva su primera aparición. id_instalacion e
+id_fabrica deben estar ausentes o ser null. El servidor resuelve todos los IDs con el
+catálogo vigente: si falta uno, devuelve 400 antes de ejecutar la consulta histórica.
+No se admiten propiedades adicionales, solicitud_id del cliente ni selección de tablas o columnas.
+«Seleccionar una fábrica completa» podrá ser una comodidad del frontend que copie los IDs
+de los sensores de ese grupo del catálogo a id_instalaciones. id_fabrica identifica un grupo
+del catálogo y no garantiza cobertura de toda la fábrica física.
 Fechas exactas, calendario válido, intervalo positivo y extremos inclusivos.
 El intervalo máximo por consulta es de 184 días, aproximadamente seis meses.
 No hay límite de antigüedad ni ventana relativa a hoy: períodos de años anteriores son válidos
@@ -114,9 +134,13 @@ Respuesta de consulta (200):
 ```
 sensores y resumen_por_sensor contienen toda la selección del catálogo incluso sin resultados.
 Los sensores sin registros tienen total_registros 0 y todas sus estadísticas null.
-id_fabrica identifica la fábrica; fabrica y entidad son etiquetas visibles obtenidas del catálogo.
-Si un ID tiene etiquetas distintas, la etiqueta general procede del primer sensor del catálogo;
-las etiquetas individuales se conservan. Nombres iguales con IDs distintos nunca se combinan.
+En alcance fabrica la etiqueta general procede del primer sensor del grupo, incluso si
+las etiquetas individuales difieren. Ese alcance agrupa por ID, no por nombre.
+En alcance seleccion, entidad es «Selección de N sensores», con N igual al número de IDs únicos.
+sensores y resumen_por_sensor siguen el orden solicitado. Los puntos mantienen el orden
+cronológico de SQL. La etiqueta fabrica es la etiqueta común o «Varias fábricas» si difiere.
+Independientemente, id_fabrica es el ID común o null si difiere. Cada sensor conserva sus
+propios metadatos, incluso cuando dos grupos distintos tienen la misma etiqueta.
 Cada punto conserva
 id_medicion, id_instalacion, fecha local, temperatura, humedad, humedad_absoluta, entalpia,
 estado_temperatura, estado_humedad y los diez límites históricos (POINT_FIELDS en el servicio).
@@ -138,7 +162,9 @@ Catálogo: SELECT instalaciones con EXISTS clima_limites y factor_calibracion_pu
 Autenticación: SELECT id_legajo FROM usuarios WHERE id_legajo = ?; parámetros [usuario].
 Histórico: una única sentencia WITH base / marcada / SELECT sobre mediciones_clima_24hs.
 Parámetros en orden: [segundosBloque, ...idsValidados, desde, hasta, 12001].
-Para N instalaciones hay N+4 placeholders. El cliente nunca controla N ni los IDs colectivos.
+Para N instalaciones hay N+4 placeholders. N y el muestreo se calculan sobre los sensores
+únicos resueltos en el catálogo. En el ejemplo de tres sensores y 24 horas, los parámetros son
+`[600, 110, 205, 309, "2026-11-03 12:00:00", "2026-11-04 12:00:00", 12001]`.
 Se valida que cada ID sea entero seguro positivo, único; IN contiene solamente signos ?.
 No se envían múltiples sentencias ni opciones multipleStatements. db.js permanece intacto:
 su configuración heredada habilita múltiples sentencias, pero este módulo no la usa.

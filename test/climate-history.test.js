@@ -310,3 +310,121 @@ test('gate stays held until a failing pending SQL operation actually settles', a
   assert.equal(res.calls[0].code, 500); assert.equal(res.calls.length, 1);
   const next = harness(); await next.consult(); assert.equal(next.res.calls[0].code, 200);
 });
+
+
+const selection = ids => ({ alcance: 'seleccion', id_instalaciones: ids, desde: body.desde, hasta: body.hasta });
+
+test('selection of one sensor uses the singular entity label', async () => {
+  const h = harness({ body: selection([52]) });
+  await h.consult();
+  assert.equal(h.res.calls[0].code, 200);
+  assert.equal(h.res.calls[0].value.entidad, 'Selección de 1 sensor');
+});
+
+test('selection accepts exactly 100 distinct catalog IDs and binds every ID', async () => {
+  const ids = Array.from({ length: 100 }, (_, index) => 90000 + index);
+  const catalog = ids.map(id_instalacion => ({ ...catalogRow, id_instalacion }));
+  const h = harness({ body: selection(ids), catalog, rows: [] });
+  await h.consult();
+  const [{ code, value }] = h.res.calls;
+  assert.equal(code, 200);
+  assert.deepEqual(value.sensores.map(s => s.id_instalacion), ids);
+  const seconds = samplingSeconds(86400000, 100);
+  assert.equal(value.muestreo_segundos, seconds);
+  const { sql, values } = h.queries[1];
+  assert.equal(sql.match(/id_instalacion IN \(([^)]*)\)/)[1], ids.map(() => '?').join(', '));
+  for (const id of ids) assert.ok(!sql.includes(String(id)));
+  assert.deepEqual(values, [seconds, ...ids, body.desde, body.hasta, 12001]);
+});
+
+for (const [name, list] of [
+  ['missing', undefined], ['not array', {}], ['empty', []], ['101 before deduplication', Array(101).fill(52)],
+  ...['52', 0, -1, 2.5, null, NaN, {}, Number.MAX_SAFE_INTEGER + 1].map((id, i) => ['invalid element ' + i, [52, id]]),
+]) test('selection rejects ' + name + ' before SQL', async () => {
+  const h = harness({ body: selection(list) });
+  await h.consult();
+  assert.equal(h.queries.length, 0);
+  assert.equal(h.res.calls.length, 1);
+  assert.equal(h.res.calls[0].code, 400);
+});
+
+test('selection rejects mixed selectors, unexpected fields and invalid period before SQL', async () => {
+  for (const patch of [{ id_instalacion: 52 }, { id_fabrica: 'F1' }, { fabrica: 'name' }, { extra: 1 },
+    { hasta: '2027-01-01 00:00:00' }, { alcance: 'sensor', id_instalacion: 52 }, { alcance: 'fabrica', id_fabrica: 'F1' }]) {
+    const h = harness({ body: { ...selection([52]), ...patch } });
+    await h.consult();
+    assert.equal(h.queries.length, 0);
+    assert.equal(h.res.calls[0].code, 400);
+  }
+});
+
+test('selection validates every ID before history and releases the gate on a catalog miss', async () => {
+  const missing = harness({ body: selection([52, 999]) });
+  await missing.consult();
+  assert.deepEqual(missing.queries.map(q => q.sql), [CATALOG_SQL]);
+  assert.equal(missing.res.calls.length, 1);
+  assert.equal(missing.res.calls[0].code, 400);
+  const next = harness({ body: selection(Array(100).fill(52)) });
+  await next.consult();
+  assert.equal(next.res.calls[0].code, 200);
+  assert.equal(next.res.calls[0].value.sensores.length, 1);
+});
+
+for (const [secondLabel, secondId, label, id] of [
+  ['Norte', 'F1', 'Norte', 'F1'], ['Sur', 'F2', 'Varias fábricas', null],
+  ['Norte', 'F2', 'Norte', null], ['Sur', 'F1', 'Varias fábricas', 'F1'],
+]) test('selection resolves independent factory label and ID for ' + secondLabel + '/' + secondId, async () => {
+  const catalog = [{ ...catalogRow, fabrica: 'Norte' },
+    { ...catalogRow, id_instalacion: 205, fabrica: secondLabel, id_fabrica: secondId, info_extra: 'Otro sector' },
+    { ...catalogRow, id_instalacion: 999 }];
+  const h = harness({ body: { ...selection([205, 52, 205]), id_instalacion: null, id_fabrica: null }, catalog });
+  await h.consult();
+  const [{ code, value }] = h.res.calls;
+  assert.equal(code, 200);
+  assert.equal(value.alcance, 'seleccion');
+  assert.equal(value.entidad, 'Selección de 2 sensores');
+  assert.equal(value.fabrica, label);
+  assert.equal(value.id_fabrica, id);
+  assert.deepEqual(value.sensores.map(s => s.id_instalacion), [205, 52]);
+  assert.deepEqual(value.resumen_por_sensor.map(s => s.id_instalacion), [205, 52]);
+  assert.deepEqual(value.puntos.map(p => p.id_instalacion), [52]);
+  const empty = value.resumen_por_sensor[0];
+  assert.equal(empty.total_registros, 0);
+  for (const metric of METRICS) assert.deepEqual(empty[metric], { minimo: null, promedio: null, maximo: null });
+  assert.deepEqual(h.queries[1].values, [samplingSeconds(86400000, 2), 205, 52, body.desde, body.hasta, 12001]);
+});
+
+test('selection binds three distinct IDs in order; sampling uses neither catalog size nor raw list length', async () => {
+  const ids = [110, 205, 309];
+  const catalog = [...ids, ...Array.from({ length: 97 }, (_, i) => i + 1)].map(id => ({ ...catalogRow, id_instalacion: id }));
+  const h = harness({ body: selection([...ids, ...Array(97).fill(110)]), catalog, rows: [] });
+  await h.consult();
+  assert.equal(h.res.calls[0].code, 200);
+  const { sql, values } = h.queries[1];
+  assert.match(sql, /WHERE id_instalacion IN \(\?, \?, \?\)/);
+  assert.equal(sql.match(/\?/g).length, 7);
+  assert.doesNotMatch(sql, /\b(110|205|309)\b/);
+  assert.deepEqual(values, [600, ...ids, body.desde, body.hasta, 12001]);
+});
+
+test('selection shares the process gate through a failing history query', async () => {
+  const entered = deferred(), pending = deferred();
+  const service = createClimateHistoryService({ repository: { catalog: async () => [catalogRow],
+    history: () => { entered.resolve(); return pending.promise; } } });
+  const res = response();
+  const running = createClimateHistoryController({ service }).consult({ body: selection([52]) }, res);
+  await entered.promise;
+  try {
+    const busy = harness({ body: selection([52]) });
+    await busy.consult();
+    assert.equal(busy.res.calls[0].code, 429);
+    assert.equal(busy.res.headers['Retry-After'], '5');
+    assert.equal(busy.queries.length, 0);
+  } finally { pending.reject(new Error('PRIVATE')); await running; }
+  assert.equal(res.calls.length, 1);
+  assert.equal(res.calls[0].code, 500);
+  assert.doesNotMatch(res.calls[0].value.message, /PRIVATE/);
+  const overflow = harness({ body: selection([52]), rows: Array(MAX_POINTS + 1).fill(point) });
+  await overflow.consult();
+  assert.deepEqual(overflow.res.calls, [{ code: 422, value: { message: 'La consulta supera 12000 puntos. Reducí el período o la cantidad de sensores.' } }]);
+});

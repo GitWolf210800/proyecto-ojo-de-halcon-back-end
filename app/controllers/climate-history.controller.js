@@ -10,7 +10,7 @@ export function createClimateHistoryController({ service }) {
         res.set('Retry-After', '5');
         return res.status(429).json({ message: 'Hay una consulta histórica en curso. Intentá nuevamente en unos segundos.' });
       }
-      if (error instanceof ClimateSizeError) return res.status(422).json({ message: 'La consulta supera 12000 puntos. Reducí el período o seleccioná un sensor.' });
+      if (error instanceof ClimateSizeError) return res.status(422).json({ message: 'La consulta supera 12000 puntos. Reducí el período o la cantidad de sensores.' });
       return res.status(500).json({ message: 'No se pudo consultar el histórico de clima.' });
     }
   };
