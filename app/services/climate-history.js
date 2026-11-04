@@ -41,19 +41,29 @@ function calendarTime(value) {
 
 export function validateClimateQuery(body) {
   const allowed = ['alcance', 'id_instalacion', 'id_fabrica', 'fabrica', 'desde', 'hasta'];
+  if (body?.alcance === 'seleccion') allowed.push('id_instalaciones');
   if (!body || typeof body !== 'object' || Array.isArray(body) ||
       ![Object.prototype, null].includes(Object.getPrototypeOf(body)) ||
       Reflect.ownKeys(body).some(key => !allowed.includes(key))) throw new ClimateInputError();
-  if (!['sensor', 'fabrica'].includes(body.alcance)) throw new ClimateInputError();
+  if (!['sensor', 'fabrica', 'seleccion'].includes(body.alcance)) throw new ClimateInputError();
   // Labels are server-owned; a client label must never select a factory.
   if (body.fabrica != null) throw new ClimateInputError();
-  if (body.alcance === 'sensor') {
+  let ids;
+  if (body.alcance === 'seleccion') {
+    const list = body.id_instalaciones;
+    if (body.id_instalacion != null || body.id_fabrica != null ||
+        !Array.isArray(list) || list.length < 1 || list.length > 100) throw new ClimateInputError();
+    for (const id of list) {
+      if (!Number.isSafeInteger(id) || id <= 0) throw new ClimateInputError();
+    }
+    ids = [...new Set(list)];
+  } else if (body.alcance === 'sensor') {
     if (!Number.isSafeInteger(body.id_instalacion) || body.id_instalacion <= 0 || body.id_fabrica != null) throw new ClimateInputError();
   } else if (typeof body.id_fabrica !== 'string' || !body.id_fabrica.trim() ||
       body.id_fabrica.length > 200 || body.id_instalacion != null) throw new ClimateInputError();
   const start = calendarTime(body.desde), end = calendarTime(body.hasta);
   if (start === null || end === null || end <= start || end - start > MAX_INTERVAL_DAYS * 86400000) throw new ClimateInputError();
-  return { alcance: body.alcance, id_instalacion: body.id_instalacion ?? null,
+  return { alcance: body.alcance, ...(ids && { id_instalaciones: ids }), id_instalacion: body.id_instalacion ?? null,
     id_fabrica: body.id_fabrica?.trim() ?? null, desde: body.desde, hasta: body.hasta, rangeMs: end - start };
 }
 
@@ -105,16 +115,34 @@ export function formatClimateResult(rows, query, sensors, seconds, requestId) {
     return { id_medicion: measurement, id_instalacion: id, fecha: date,
       ...Object.fromEntries(POINT_FIELDS.map(field => [field, numberOrNull(row[field])])) };
   });
+  let { fabrica, id_fabrica } = sensors[0];
+  let entidad = query.alcance === 'sensor' ? sensors[0].etiqueta : fabrica;
+  if (query.alcance === 'seleccion') {
+    entidad = sensors.length === 1 ? 'Selección de 1 sensor' : `Selección de ${sensors.length} sensores`;
+    if (!sensors.every(s => s.fabrica === fabrica)) fabrica = 'Varias fábricas';
+    if (!sensors.every(s => s.id_fabrica === id_fabrica)) id_fabrica = null;
+  }
   return { tipo: 'historico_clima', solicitud_id: requestId, alcance: query.alcance,
-    entidad: query.alcance === 'sensor' ? sensors[0].etiqueta : sensors[0].fabrica,
-    id_fabrica: sensors[0].id_fabrica,
-    fabrica: sensors[0].fabrica, desde: query.desde, hasta: query.hasta, zona_horaria: TIME_ZONE,
+    entidad, id_fabrica, fabrica, desde: query.desde, hasta: query.hasta, zona_horaria: TIME_ZONE,
     muestreo_segundos: seconds, sensores: sensors,
     resumen: { total_registros: numberOrNull(rows[0]?.total_registros) ?? 0, puntos_mostrados: points.length },
     resumen_por_sensor: sensors.map(sensor => summaries.get(sensor.id_instalacion) ?? {
       id_instalacion: sensor.id_instalacion, total_registros: 0,
       ...Object.fromEntries(METRICS.map(metric => [metric, { minimo: null, promedio: null, maximo: null }])),
     }), puntos: points };
+}
+
+function resolveSensors(query, catalog) {
+  if (query.alcance === 'seleccion') {
+    const byId = new Map(catalog.map(sensor => [sensor.id_instalacion, sensor]));
+    return query.id_instalaciones.map(id => {
+      const sensor = byId.get(id);
+      if (!sensor) throw new ClimateInputError();
+      return sensor;
+    });
+  }
+  return catalog.filter(sensor => query.alcance === 'sensor'
+    ? sensor.id_instalacion === query.id_instalacion : sensor.id_fabrica === query.id_fabrica);
 }
 
 export function createClimateHistoryService({ repository, makeId = randomUUID }) {
@@ -126,8 +154,7 @@ export function createClimateHistoryService({ repository, makeId = randomUUID })
       if (historyBusy) throw new ClimateBusyError();
       historyBusy = true;
       try {
-        const sensors = (await catalog()).filter(sensor => query.alcance === 'sensor'
-          ? sensor.id_instalacion === query.id_instalacion : sensor.id_fabrica === query.id_fabrica);
+        const sensors = resolveSensors(query, await catalog());
         if (!sensors.length) throw new ClimateInputError();
         const seconds = samplingSeconds(query.rangeMs, sensors.length);
         const requestId = makeId();
