@@ -13,6 +13,10 @@ import { createIndustrialAuthorization, industrialPolicies } from "./middlewares
 import { createUnlockHistoryRepository } from './repositories/unlock-history.repository.js';
 import { createUnlockHistoryAccess } from './middlewares/unlock-history-access.js';
 import { createUnlockHistoryController } from './controllers/unlock-history.controller.js';
+import { createClimateHistoryRepository } from './repositories/climate-history.repository.js';
+import { createClimateHistoryAccess } from './middlewares/climate-history-access.js';
+import { createClimateHistoryService } from './services/climate-history.js';
+import { createClimateHistoryController } from './controllers/climate-history.controller.js';
 
 const industrialBarrier = (policy) => createIndustrialAuthorization({
   getConnection: () => connection,
@@ -73,6 +77,17 @@ app.use((req, res, next) => {
 });
 
 // Rutas
+const climateRepository = createClimateHistoryRepository({ getConnection: () => connection });
+const climateAccess = createClimateHistoryAccess({
+  getAccessMode: () => process.env.APP_ACCESS_MODE,
+  verifyJwt: (token, options) => jsonwebtoken.verify(token, process.env.JWT_SECRET, options),
+  repository: climateRepository,
+});
+const climateController = createClimateHistoryController({
+  service: createClimateHistoryService({ repository: climateRepository }),
+});
+app.get('/api/historico-clima/catalogo', climateAccess, climateController.catalog);
+app.post('/api/historico-clima/consulta', climateAccess, climateController.consult);
 const unlockHistoryRepository = createUnlockHistoryRepository({ getConnection: () => connection });
 app.get('/api/historial-desbloqueo-cardas', createUnlockHistoryAccess({
   getAccessMode: () => process.env.APP_ACCESS_MODE,
