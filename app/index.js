@@ -17,6 +17,9 @@ import { createClimateHistoryRepository } from './repositories/climate-history.r
 import { createClimateHistoryAccess } from './middlewares/climate-history-access.js';
 import { createClimateHistoryService } from './services/climate-history.js';
 import { createClimateHistoryController } from './controllers/climate-history.controller.js';
+import { createFilterHistoryRepository } from './repositories/filter-history.repository.js';
+import { createFilterHistoryService } from './services/filter-history.js';
+import { createFilterHistoryController } from './controllers/filter-history.controller.js';
 
 const industrialBarrier = (policy) => createIndustrialAuthorization({
   getConnection: () => connection,
@@ -88,6 +91,15 @@ const climateController = createClimateHistoryController({
 });
 app.get('/api/historico-clima/catalogo', climateAccess, climateController.catalog);
 app.post('/api/historico-clima/consulta', climateAccess, climateController.consult);
+// Same access policy and user lookup; no additional role restriction.
+const historyAccess = climateAccess;
+const filterRepository = createFilterHistoryRepository({ getConnection: () => connection });
+const filterController = createFilterHistoryController({
+  service: createFilterHistoryService({ repository: filterRepository }),
+});
+app.get('/api/historico-filtros/catalogo', historyAccess, filterController.catalog);
+app.post('/api/historico-filtros/consulta', historyAccess, filterController.consult);
+app.post('/api/historico-filtros/exportacion', historyAccess, filterController.export);
 const unlockHistoryRepository = createUnlockHistoryRepository({ getConnection: () => connection });
 app.get('/api/historial-desbloqueo-cardas', createUnlockHistoryAccess({
   getAccessMode: () => process.env.APP_ACCESS_MODE,

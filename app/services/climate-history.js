@@ -1,11 +1,10 @@
 import { randomUUID } from 'node:crypto';
+import { acquireHistoryQuery } from './history-query-gate.js';
 
 export const TIME_ZONE = 'America/Argentina/Buenos_Aires';
 export const MAX_POINTS = 12000;
 export const TARGET_POINTS = 8000;
 export const MAX_INTERVAL_DAYS = 184;
-// Shared by all service instances in this process. Never released on HTTP disconnect.
-let historyBusy = false;
 export const METRICS = Object.freeze(['temperatura', 'humedad', 'humedad_absoluta', 'entalpia']);
 export const LIMITS = Object.freeze([
   'min_A_temperatura', 'min_temperatura', 'max_temperatura', 'max_A_temperatura',
@@ -151,8 +150,7 @@ export function createClimateHistoryService({ repository, makeId = randomUUID })
     catalog,
     async consult(body) {
       const query = validateClimateQuery(body);
-      if (historyBusy) throw new ClimateBusyError();
-      historyBusy = true;
+      const release = acquireHistoryQuery(ClimateBusyError);
       try {
         const sensors = resolveSensors(query, await catalog());
         if (!sensors.length) throw new ClimateInputError();
@@ -161,7 +159,7 @@ export function createClimateHistoryService({ repository, makeId = randomUUID })
         const rows = await repository.history(sensors.map(sensor => sensor.id_instalacion), query.desde, query.hasta, seconds);
         return formatClimateResult(rows, query, sensors, seconds, requestId);
       } finally {
-        historyBusy = false;
+        release();
       }
     },
   };
